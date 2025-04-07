@@ -5,4 +5,6 @@
 - React: 19.0.0
 
 ## Tools
+- Language: TypeScript
+- Style: Styled-Components
 - Build: Vite
