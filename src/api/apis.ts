@@ -14,7 +14,7 @@ export async function getStockInfo(params: StockInfoParams) {
   return res.data;
 }
 
-export async function getSearch(params: { keyword?: string }) {
+export async function getSearch(params: SearchParams) {
   const res = await instance.get<SearchResponse>("search", {
     params: params,
   });
@@ -38,6 +38,9 @@ export interface StockInfoResponse {
     prediction: Prediction;
     explanation: Explanation;
   };
+}
+export interface SearchParams {
+  keyword?: string;
 }
 
 export interface SearchResponse {
