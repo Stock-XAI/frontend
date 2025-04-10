@@ -19,6 +19,7 @@ export function useStockSearch(params: SearchParams, disabled: boolean) {
     queryFn: () => getSearch(params),
     enabled: !disabled, //요청 보낼지 여부
     staleTime: 1000 * 60 * 60 * 24, //하루동안 캐시 유지
+    retry: 2, //요청 실패시 재요청 횟수
   });
 }
 
@@ -28,5 +29,6 @@ export function useStockInfo(params: StockInfoParams) {
     queryFn: () => getStockInfo(params),
     enabled: true, //요청 보낼지 여부, 추후 변수로 관리 가능
     staleTime: 1000 * 60 * 60 * 1, //한 시간동안 캐시 유지
+    retry: 2,
   });
 }

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const sections = ["Preview", "Method", "Model", "Main Function"];
 
-function Home() {
+function Detail() {
   const sectionRefs = useRef<HTMLElement[]>([]);
   const [active, setActive] = useState("Preview");
   const [keyword, setKeyword] = useState("");
@@ -47,10 +47,6 @@ function Home() {
     sectionRefs.current[index]?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleStockPrediction = (item: Stock) => {
-    navigate("/detail?ticker=" + item.ticker);
-  };
-
   return (
     <>
       <Navbar>
@@ -81,12 +77,7 @@ function Home() {
             <SearchResultContainer>
               <ul>
                 {searchResult.map((item) => (
-                  <StockInfoItem
-                    key={item.ticker}
-                    onClick={() => {
-                      handleStockPrediction(item);
-                    }}
-                  >
+                  <StockInfoItem key={item.ticker}>
                     <strong>{item.ticker}</strong> - {item.name}
                   </StockInfoItem>
                 ))}
@@ -120,7 +111,7 @@ function Home() {
   );
 }
 
-export default Home;
+export default Detail;
 
 const Navbar = styled.nav`
   position: fixed;
