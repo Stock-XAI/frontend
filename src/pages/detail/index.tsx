@@ -1,35 +1,33 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { useStockSearch } from "../../hooks/useStockQuery";
-import { Stock } from "../../types/stock";
-import { useNavigate } from "react-router-dom";
+import { Stock, StockInfo } from "../../types/stock";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import logo from "../../assets/logo.png";
+import { useStockInfo, useStockSearch } from "../../hooks/useStockQuery";
+import ReactApexChart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 
-const sections = ["Preview", "Method", "Model", "Main Function"];
+export interface ChartState {
+  series: {
+    name: string;
+    data: number[];
+  }[];
+  options: ApexOptions;
+}
 
 function Detail() {
-  const sectionRefs = useRef<HTMLElement[]>([]);
-  const [active, setActive] = useState("Preview");
+  const [searchParams] = useSearchParams();
+  const _ticker = searchParams.get("ticker") || "";
+  const [ticker, setTicker] = useState(_ticker);
   const [keyword, setKeyword] = useState("");
+  const [stockPredictionResult, setStockPredictionResult] = useState<
+    StockInfo | undefined
+  >(undefined);
   const [searchResult, setSearchResult] = useState<Stock[]>([]);
   const navigate = useNavigate();
+  const [isFocused, setIsFocused] = useState(false);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.getAttribute("data-id");
-            if (id) setActive(id);
-          }
-        });
-      },
-      { threshold: 0.6 }
-    );
-
-    sectionRefs.current.forEach((el) => el && observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
+  const { data: stockInfoData } = useStockInfo({ ticker });
 
   const { data: searchData } = useStockSearch(
     { keyword },
@@ -42,49 +40,80 @@ function Detail() {
     }
   }, [searchData]);
 
-  const scrollToSection = (id: string) => {
-    const index = sections.findIndex((sec) => sec === id);
-    sectionRefs.current[index]?.scrollIntoView({ behavior: "smooth" });
+  //setState 저장 필요 + 차트 옵션 설정
+  const [state, setState] = useState<ChartState>({
+    options: {
+      chart: {
+        id: "basic-bar",
+      },
+      xaxis: {
+        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+      },
+    },
+    series: [
+      {
+        name: "series-1",
+        data: [30, 40, 45, 50, 49, 60, 70, 91],
+      },
+    ],
+  });
+
+  useEffect(() => {
+    setKeyword(ticker);
+  }, []);
+
+  useEffect(() => {
+    if (stockInfoData) {
+      setStockPredictionResult(stockInfoData.data);
+    }
+  }, [stockInfoData]);
+
+  const handleStockPrediction = (item: Stock) => {
+    setTicker(item.ticker);
+    setKeyword(item.ticker);
   };
 
   return (
     <>
       <Navbar>
-        {sections.map((item) => (
-          <NavItem
-            key={item}
-            onClick={() => scrollToSection(item)}
-            $active={active === item}
-          >
-            {item}
-          </NavItem>
-        ))}
+        <div onClick={() => navigate("/")}>
+          <img
+            src={logo}
+            alt="logo"
+            style={{ width: "40px", height: "auto" }}
+          />
+        </div>
       </Navbar>
       <Main>
-        <Title>Stock XAI.</Title>
-        <SubContent>
-          You can utilize stock prediction results. <br />
-          By leveraging numerous supporting factors, you will be able to make
-          even more accurate inferences.
-        </SubContent>
         <SearchWrapper>
           <Input
             placeholder="Enter the Stock Ticker or Name."
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => {
+              setTimeout(() => {
+                setIsFocused(false);
+              }, 200);
+            }}
           />
-          {keyword.length > 0 && searchResult.length > 0 && (
+          {isFocused && keyword.length > 0 && searchResult.length > 0 && (
             <SearchResultContainer>
               <ul>
                 {searchResult.map((item) => (
-                  <StockInfoItem key={item.ticker}>
+                  <StockInfoItem
+                    key={item.ticker}
+                    onClick={() => {
+                      handleStockPrediction(item);
+                    }}
+                  >
                     <strong>{item.ticker}</strong> - {item.name}
                   </StockInfoItem>
                 ))}
               </ul>
             </SearchResultContainer>
           )}
-          {keyword.length > 0 && searchResult.length === 0 && (
+          {isFocused && keyword.length > 0 && searchResult.length === 0 && (
             <SearchResultContainer>
               <h3>No results found.</h3>
             </SearchResultContainer>
@@ -93,19 +122,63 @@ function Detail() {
       </Main>
 
       <Container>
-        {sections.map((item, index) => (
-          <Section
-            key={item}
-            ref={(el: HTMLElement | null): void => {
-              if (el) sectionRefs.current[index] = el;
-            }}
-            data-id={item}
-          >
-            <h2>{item}</h2>
-            <p>This is the {item} section with some dummy text.</p>
-            <DummyContent />
-          </Section>
-        ))}
+        {stockPredictionResult && (
+          <>
+            <Section>
+              <h1>{stockPredictionResult.ticker} Stock Prediction Report</h1>
+            </Section>
+
+            <Section>
+              <h2>Basic Information</h2>
+              <ReactApexChart
+                options={state.options}
+                series={state.series}
+                type="line"
+                width="500"
+              />
+            </Section>
+
+            <Section>
+              <h2>Related News</h2>
+              <NewsList>
+                {stockPredictionResult.news.map((item, index) => (
+                  <li key={index}>
+                    <strong>{item.title}</strong>
+                    <p>{item.summary}</p>
+                    <span>{item.sentiment === "positive" ? "👍" : "👎"}</span>
+                  </li>
+                ))}
+              </NewsList>
+            </Section>
+
+            <Section>
+              <h2>Prediction Results</h2>
+              <p>
+                <strong>Prediction:</strong>{" "}
+                {stockPredictionResult.prediction.result}
+              </p>
+              <p>
+                <strong>Horizon:</strong>{" "}
+                {stockPredictionResult.prediction.horizon}
+              </p>
+            </Section>
+
+            <Section>
+              <h2>Inferences</h2>
+              <p>{stockPredictionResult.explanation.why}</p>
+              <ul>
+                {stockPredictionResult.explanation.features.map(
+                  (feature, idx) => (
+                    <li key={feature}>
+                      {feature} → SHAP:{" "}
+                      {stockPredictionResult.explanation.shapValues[idx]}
+                    </li>
+                  )
+                )}
+              </ul>
+            </Section>
+          </>
+        )}
       </Container>
     </>
   );
@@ -152,12 +225,6 @@ const Input = styled.input`
   }
 `;
 
-const SubContent = styled.div`
-  font-size: 28px;
-  font-weight: 400;
-  color: ${({ theme }) => theme.grayColor.gray400};
-`;
-
 const Main = styled.main`
   display: flex;
   flex-direction: column;
@@ -168,52 +235,44 @@ const Main = styled.main`
   background-color: ${({ theme }) => theme.systemColor.black};
 `;
 
-const Title = styled.div`
-  font-size: 96px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.grayColor.gray100};
-  margin-top: 32px;
-`;
-
-const NavItem = styled.div<{ $active: boolean }>`
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
-  color: ${({ $active, theme }) =>
-    $active ? theme.systemColor.white : theme.grayColor.gray500};
-  transition: 0.2s;
-`;
-
 const Container = styled.div`
   margin-top: 70px;
 `;
 
-const Section = styled.section`
-  height: 100vh;
-  padding: 100px 40px 40px;
-  background-color: ${({ theme }) => theme.systemColor.white};
-  border-bottom: 1px solid #ccc;
+const SearchWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
 
+const Section = styled.section`
+  padding: 40px;
+  border-bottom: 1px solid ${({ theme }) => theme.grayColor.gray300};
+  background-color: ${({ theme }) => theme.systemColor.white};
+
+  h1,
   h2 {
-    font-size: 2rem;
     margin-bottom: 16px;
   }
 `;
 
-const DummyContent = () => (
-  <div>
-    {[...Array(5)].map((_, i) => (
-      <p key={i}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at
-        vestibulum magna.
-      </p>
-    ))}
-  </div>
-);
+const NewsList = styled.ul`
+  list-style: none;
+  padding: 0;
 
-const SearchWrapper = styled.div`
-  position: relative;
-  width: 100%;
+  li {
+    margin-bottom: 16px;
+    background-color: ${({ theme }) => theme.grayColor.gray100};
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  p {
+    margin: 4px 0;
+  }
+
+  span {
+    font-size: 20px;
+  }
 `;
 
 const SearchResultContainer = styled.div`

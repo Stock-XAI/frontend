@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import { useStockSearch } from "../../hooks/useStockQuery";
 import { Stock } from "../../types/stock";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
 
 const sections = ["Preview", "Method", "Model", "Main Function"];
 
@@ -54,6 +55,7 @@ function Home() {
   return (
     <>
       <Navbar>
+        <img src={logo} alt="logo" style={{ width: "40px", height: "auto" }} />
         {sections.map((item) => (
           <NavItem
             key={item}

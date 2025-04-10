@@ -27,3 +27,11 @@ export interface Stock {
   ticker: string;
   name: string;
 }
+
+export interface StockInfo {
+  ticker: string;
+  chartData: ChartData[];
+  news: News[];
+  prediction: Prediction;
+  explanation: Explanation;
+}

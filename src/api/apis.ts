@@ -1,13 +1,8 @@
-import {
-  ChartData,
-  Explanation,
-  News,
-  Prediction,
-  Stock,
-} from "../types/stock";
+import { Stock, StockInfo } from "../types/stock";
 import instance from "./instance";
 
 export async function getStockInfo(params: StockInfoParams) {
+  console.log("getStockInfo", params);
   const res = await instance.get<StockInfoResponse>("stock-info", {
     params: params,
   });
@@ -31,13 +26,7 @@ export interface StockInfoParams {
 export interface StockInfoResponse {
   success: boolean;
   message: string;
-  data: {
-    ticker: string;
-    chartData: ChartData[];
-    news: News[];
-    prediction: Prediction;
-    explanation: Explanation;
-  };
+  data: StockInfo;
 }
 export interface SearchParams {
   keyword?: string;
