@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { styled } from "styled-components";
 import { Stock, StockInfo } from "../../types/stock";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -40,22 +40,52 @@ function Detail() {
     }
   }, [searchData]);
 
+  const stockChartData = useMemo(() => {
+    return stockInfoData?.data.chartData.map((item) => ({
+      x: new Date(item.date),
+      y: [item.open, item.high, item.low, item.close],
+    }));
+  }, [stockInfoData?.data.chartData]);
+
+  useEffect(() => {
+    setState({
+      ...state,
+      series: [
+        { data: stockChartData || [] }, //항상 배열로 넣기
+      ],
+    });
+  }, [stockChartData]);
+
   //setState 저장 필요 + 차트 옵션 설정
-  const [state, setState] = useState<ChartState>({
-    options: {
-      chart: {
-        id: "basic-bar",
-      },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
-      },
-    },
+  const [state, setState] = useState<{
+    series: {
+      data: { x: Date; y: number[] }[];
+    }[];
+    options: ApexOptions;
+  }>({
     series: [
       {
-        name: "series-1",
-        data: [30, 40, 45, 50, 49, 60, 70, 91],
+        data: [],
       },
     ],
+    options: {
+      chart: {
+        type: "candlestick" as const,
+        height: 350,
+      },
+      title: {
+        text: "CandleStick Chart",
+        align: "left",
+      },
+      xaxis: {
+        type: "datetime",
+      },
+      yaxis: {
+        tooltip: {
+          enabled: true,
+        },
+      },
+    },
   });
 
   useEffect(() => {
@@ -133,8 +163,8 @@ function Detail() {
               <ReactApexChart
                 options={state.options}
                 series={state.series}
-                type="line"
-                width="500"
+                type="candlestick"
+                height={350}
               />
             </Section>
 
@@ -150,33 +180,34 @@ function Detail() {
                 ))}
               </NewsList>
             </Section>
+            <SectionWrapper>
+              <Section>
+                <h2>Prediction Results</h2>
+                <p>
+                  <strong>Prediction:</strong>{" "}
+                  {stockPredictionResult.prediction.result}
+                </p>
+                <p>
+                  <strong>Horizon:</strong>{" "}
+                  {stockPredictionResult.prediction.horizon}
+                </p>
+              </Section>
 
-            <Section>
-              <h2>Prediction Results</h2>
-              <p>
-                <strong>Prediction:</strong>{" "}
-                {stockPredictionResult.prediction.result}
-              </p>
-              <p>
-                <strong>Horizon:</strong>{" "}
-                {stockPredictionResult.prediction.horizon}
-              </p>
-            </Section>
-
-            <Section>
-              <h2>Inferences</h2>
-              <p>{stockPredictionResult.explanation.why}</p>
-              <ul>
-                {stockPredictionResult.explanation.features.map(
-                  (feature, idx) => (
-                    <li key={feature}>
-                      {feature} → SHAP:{" "}
-                      {stockPredictionResult.explanation.shapValues[idx]}
-                    </li>
-                  )
-                )}
-              </ul>
-            </Section>
+              <Section>
+                <h2>Inferences</h2>
+                <p>{stockPredictionResult.explanation.why}</p>
+                <ul>
+                  {stockPredictionResult.explanation.features.map(
+                    (feature, idx) => (
+                      <li key={feature}>
+                        {feature} → SHAP:{" "}
+                        {stockPredictionResult.explanation.shapValues[idx]}
+                      </li>
+                    )
+                  )}
+                </ul>
+              </Section>
+            </SectionWrapper>
           </>
         )}
       </Container>
@@ -200,6 +231,13 @@ const Navbar = styled.nav`
   padding: 0 30px;
   z-index: 1000;
   border-bottom: ${({ theme }) => `1px solid ${theme.grayColor.gray800}`};
+`;
+
+const SectionWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
 `;
 
 const Input = styled.input`
@@ -248,7 +286,6 @@ const Section = styled.section`
   padding: 40px;
   border-bottom: 1px solid ${({ theme }) => theme.grayColor.gray300};
   background-color: ${({ theme }) => theme.systemColor.white};
-
   h1,
   h2 {
     margin-bottom: 16px;
