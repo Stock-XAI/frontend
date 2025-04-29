@@ -9,7 +9,9 @@ export interface ChartData {
 export interface News {
   title: string;
   summary: string;
-  sentiment: "positive" | "negative" | "neutral";
+  link: string;
+  pubDate: string; // UTC (세계 표준시) 날짜-시간 표현
+  provider: string;
 }
 
 export interface Prediction {
