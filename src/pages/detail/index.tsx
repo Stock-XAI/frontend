@@ -6,6 +6,7 @@ import logo from "../../assets/logo.png";
 import { useStockInfo, useStockSearch } from "../../hooks/useStockQuery";
 import ReactApexChart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import Carousel from "../../components/slider";
 
 export interface ChartState {
   series: {
@@ -170,15 +171,7 @@ function Detail() {
 
             <Section>
               <h2>Related News</h2>
-              <NewsList>
-                {stockPredictionResult.news.map((item, index) => (
-                  <li key={index}>
-                    <strong>{item.title}</strong>
-                    <p>{item.summary}</p>
-                    <span>{item.sentiment === "positive" ? "👍" : "👎"}</span>
-                  </li>
-                ))}
-              </NewsList>
+              <Carousel data={stockPredictionResult.news} />
             </Section>
             <SectionWrapper>
               <Section>
