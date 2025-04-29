@@ -41,14 +41,23 @@ export default function Carousel({ data }: Props) {
               offset={offset}
               isCenter={isCenter}
               isVisible={isVisible}
-              onClick={() =>
-                window.open(item.link, "_blank", "noopener,noreferrer")
-              }
             >
               <TitleWrapper isCenter={isCenter}>{item.title}</TitleWrapper>
               <SummaryWrapper>{item.summary}</SummaryWrapper>
-              {item.pubDate}
-              {item.provider}
+              <BottomWrapper>
+                <MoreButton
+                  onClick={() =>
+                    window.open(item.link, "_blank", "noopener,noreferrer")
+                  }
+                >
+                  More
+                  <img src={ArrowRightIcon} width="20px" height="20px" />
+                </MoreButton>
+                <DetailWrapper>
+                  <ProviderWrapper>{item.provider}</ProviderWrapper>
+                  <DateWrapper>{item.pubDate.split("T")[0]}</DateWrapper>
+                </DetailWrapper>
+              </BottomWrapper>
             </CarouselItem>
           );
         })}
@@ -67,6 +76,22 @@ export const CarouselWrapper = styled.div`
   overflow: hidden;
   width: 100%;
   margin: 0 auto;
+`;
+
+export const DetailWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const BottomWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
 `;
 
 export const NavButton = styled.button`
@@ -88,6 +113,21 @@ export const NavButton = styled.button`
   opacity: 0.5;
 `;
 
+export const MoreButton = styled.button`
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  background-color: ${({ theme }) => theme.grayColor.gray700};
+  opacity: 0.8;
+  border-radius: 10px;
+  padding: 10px;
+  opacity: 0.5;
+  color: ${({ theme }) => theme.systemColor.white};
+`;
+
 export const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
@@ -95,29 +135,59 @@ export const CarouselContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 100px;
+`;
+
+export const ProviderWrapper = styled.div`
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  font-size: 18px;
+  color: ${({ theme }) => theme.grayColor.gray800};
+  font-weight: bold;
+  width: 100%;
+  padding: 0 10px;
+`;
+
+export const DateWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: end;
+  align-items: end;
+  font-size: 18px;
+  color: ${({ theme }) => theme.grayColor.gray500};
+  padding: 15px;
+  padding-top: 5px;
+  padding-bottom: 20px;
 `;
 
 export const TitleWrapper = styled.h1<{ isCenter: boolean }>`
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  justify-content: center;
-  font-size: 24px;
-  padding: 10px;
+  margin: 0;
+  line-height: 1.3;
+  width: 100%;
+  padding: 20px;
+  border-radius: 10px 10px 0px 0px;
   background-color: ${({ theme, isCenter }) =>
     isCenter ? theme.grayColor.gray800 : theme.grayColor.gray100};
+  color: ${({ isCenter, theme }) =>
+    isCenter ? theme.grayColor.gray100 : theme.grayColor.gray800};
+  font-size: 20px;
 `;
 
 export const SummaryWrapper = styled.h3`
+  margin: 0;
+  line-height: 1.3;
   color: ${({ theme }) => theme.grayColor.gray500};
   font-size: 18px;
-  gap: 10px;
   display: flex;
   flex-direction: column;
   align-items: start;
-  justify-content: center;
-  padding: 10px;
+  justify-content: start;
+  padding: 0 10px;
+  height: 100%;
+  flex: 1;
+  width: 100%;
+  text-decoration: underline dotted ${({ theme }) => theme.grayColor.gray200};
+  text-underline-offset: 2px;
 `;
 export const CarouselItem = styled.div<{
   offset: number;
@@ -141,9 +211,8 @@ export const CarouselItem = styled.div<{
     opacity 0.4s;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
+  align-items: start;
+  justify-content: start;
   z-index: ${({ isCenter }) => (isCenter ? 2 : 1)};
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   pointer-events: ${({ isVisible }) => (isVisible ? "auto" : "none")};
