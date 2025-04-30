@@ -29,6 +29,7 @@ function Detail() {
   const [searchResult, setSearchResult] = useState<Stock[]>([]);
   const navigate = useNavigate();
   const [isFocused, setIsFocused] = useState(false);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   const { data: stockInfoData } = useStockInfo({ ticker });
 
@@ -42,6 +43,20 @@ function Detail() {
       setSearchResult(searchData);
     }
   }, [searchData]);
+
+  useEffect(() => {
+    if (ticker) {
+      setIsSearching(true);
+    }
+  }, [ticker]);
+
+  useEffect(() => {
+    if (isSearching) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [isSearching]);
 
   const stockChartData = useMemo(() => {
     return stockInfoData?.data.chartData.map((item) => ({
@@ -101,6 +116,7 @@ function Detail() {
   useEffect(() => {
     if (stockInfoData) {
       setStockPredictionResult(stockInfoData.data);
+      setIsSearching(false);
     }
   }, [stockInfoData]);
 
@@ -110,7 +126,7 @@ function Detail() {
   };
 
   return (
-    <>
+    <div style={{ position: "relative" }}>
       <Navbar>
         <div onClick={() => navigate("/")}>
           <img
@@ -156,7 +172,6 @@ function Detail() {
           )}
         </SearchWrapper>
       </Main>
-
       <Container>
         {stockPredictionResult && (
           <>
@@ -212,7 +227,13 @@ function Detail() {
           </>
         )}
       </Container>
-    </>
+      {isSearching && (
+        <Overlay>
+          <Spinner />
+          Analyzing...
+        </Overlay>
+      )}
+    </div>
   );
 }
 
@@ -232,6 +253,23 @@ const Navbar = styled.nav`
   padding: 0 24px;
   z-index: 1000;
   border-bottom: ${({ theme }) => `1px solid ${theme.grayColor.gray800}`};
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 20px;
+  flex-direction: column;
+  pointer-events: all;
+  width: 100%;
+  height: 100%;
+  gap: 10px;
 `;
 
 const SectionWrapper = styled.div`
@@ -373,5 +411,23 @@ const StockInfoItem = styled.li`
 
   &:hover {
     background-color: ${({ theme }) => theme.grayColor.gray100};
+  }
+`;
+
+const Spinner = styled.div`
+  border: 6px solid rgba(255, 255, 255, 0.2);
+  border-top: 6px solid #ffffff;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
