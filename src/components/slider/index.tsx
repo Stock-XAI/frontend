@@ -91,9 +91,10 @@ export const DetailWrapper = styled.div`
 export const BottomWrapper = styled.div`
   display: flex;
   width: 100%;
+  flex: 1;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: end;
   padding: 8px;
 `;
 
@@ -127,6 +128,7 @@ export const MoreButton = styled.button`
   opacity: 0.8;
   border-radius: 10px;
   padding: 8px;
+  margin-bottom: 16px;
   opacity: 0.5;
   color: ${({ theme }) => theme.systemColor.white};
 `;
@@ -181,17 +183,17 @@ export const SummaryWrapper = styled.h3`
   line-height: 1.3;
   color: ${({ theme }) => theme.grayColor.gray500};
   font-size: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  justify-content: start;
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: calc(1.3em * 10);
   padding: 0 10px;
-  height: 100%;
-  flex: 1;
   width: 100%;
   text-decoration: underline dotted ${({ theme }) => theme.grayColor.gray200};
   text-underline-offset: 2px;
 `;
+
 export const CarouselItem = styled.div<{
   offset: number;
   isCenter: boolean;
