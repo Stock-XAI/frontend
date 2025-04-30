@@ -74,11 +74,14 @@ function Detail() {
     options: {
       chart: {
         type: "candlestick" as const,
+        zoom: {
+          enabled: false,
+        },
         height: 350,
       },
       title: {
-        text: "CandleStick Chart",
-        align: "left",
+        text: "Historical stock price data",
+        align: "center",
       },
       xaxis: {
         type: "datetime",
