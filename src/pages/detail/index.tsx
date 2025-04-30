@@ -7,6 +7,8 @@ import { useStockInfo, useStockSearch } from "../../hooks/useStockQuery";
 import ReactApexChart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import Carousel from "../../components/slider";
+import RiseIcon from "../../assets/rise.svg";
+import FallIcon from "../../assets/fall.svg";
 
 export interface ChartState {
   series: {
@@ -155,9 +157,24 @@ function Detail() {
       <Container>
         {stockPredictionResult && (
           <>
-            <Section>
-              <h1>{stockPredictionResult.ticker} Stock Prediction Report</h1>
-            </Section>
+            <Title>
+              📊 {stockPredictionResult.ticker} Stock Prediction Report
+            </Title>
+            <ResultWrapper>
+              Predicted for 7 days from now
+              <ContentWrapper>
+                <img
+                  src={
+                    stockPredictionResult.prediction.result == "Rise"
+                      ? RiseIcon
+                      : FallIcon
+                  }
+                  width="64px"
+                  height="64px"
+                />
+                {stockPredictionResult.prediction.result}
+              </ContentWrapper>
+            </ResultWrapper>
 
             <Section>
               <h2>Basic Information</h2>
@@ -174,19 +191,7 @@ function Detail() {
               <Carousel data={stockPredictionResult.news} />
             </Section>
             <SectionWrapper>
-              <Section>
-                <h2>Prediction Results</h2>
-                <p>
-                  <strong>Prediction:</strong>{" "}
-                  {stockPredictionResult.prediction.result}
-                </p>
-                <p>
-                  <strong>Horizon:</strong>{" "}
-                  {stockPredictionResult.prediction.horizon}
-                </p>
-              </Section>
-
-              <Section>
+              {/* <Section>
                 <h2>Inferences</h2>
                 <p>{stockPredictionResult.explanation.why}</p>
                 <ul>
@@ -199,7 +204,7 @@ function Detail() {
                     )
                   )}
                 </ul>
-              </Section>
+              </Section> */}
             </SectionWrapper>
           </>
         )}
@@ -231,6 +236,52 @@ const SectionWrapper = styled.div`
   flex-direction: row;
   justify-content: start;
   align-items: center;
+`;
+
+const ResultWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  height: 100px;
+  margin: 30px;
+  padding-bottom: 20px;
+  position: relative;
+  font-size: 20px;
+  color: ${({ theme }) => theme.grayColor.gray600};
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(to right, #ffffff, #808080);
+    animation: drawLine 1.2s ease-out forwards;
+  }
+
+  @keyframes drawLine {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+`;
+const ContentWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 48px;
+  color: ${({ theme }) => theme.systemColor.black};
+`;
+
+const Title = styled.div`
+  font-size: 24px;
+  font-weight: bold;
+  padding: 0 10px;
 `;
 
 const Input = styled.input`
@@ -267,7 +318,7 @@ const Main = styled.main`
 `;
 
 const Container = styled.div`
-  margin-top: 56px;
+  margin-top: 28px;
 `;
 
 const SearchWrapper = styled.div`
@@ -277,12 +328,13 @@ const SearchWrapper = styled.div`
 
 const Section = styled.section`
   padding: 32px;
-  border-bottom: 1px solid ${({ theme }) => theme.grayColor.gray300};
+  /* border-bottom: 1px solid ${({ theme }) => theme.grayColor.gray300}; */
   background-color: ${({ theme }) => theme.systemColor.white};
   h1,
   h2 {
     margin-bottom: 14px;
   }
+  font-size: 16px;
 `;
 
 const SearchResultContainer = styled.div`
