@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function Carousel({ data }: Props) {
-  const [centerIndex, setCenterIndex] = useState(0);
+  const [centerIndex, setCenterIndex] = useState(1);
 
   const handleNext = () => {
     if (centerIndex < items.length - 2) {
@@ -27,7 +27,7 @@ export default function Carousel({ data }: Props) {
 
   return (
     <CarouselWrapper>
-      <NavButton onClick={handlePrev}>
+      <NavButton onClick={handlePrev} isPossible={centerIndex > 1}>
         <img src={ArrowLeftIcon} width="30px" height="30px" />
       </NavButton>
       <CarouselContainer>
@@ -62,7 +62,10 @@ export default function Carousel({ data }: Props) {
           );
         })}
       </CarouselContainer>
-      <NavButton onClick={handleNext}>
+      <NavButton
+        onClick={handleNext}
+        isPossible={centerIndex < items.length - 2}
+      >
         <img src={ArrowRightIcon} width="30px" height="30px" />
       </NavButton>
     </CarouselWrapper>
@@ -94,13 +97,13 @@ export const BottomWrapper = styled.div`
   padding: 8px;
 `;
 
-export const NavButton = styled.button`
+export const NavButton = styled.button<{ isPossible: boolean }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.grayColor.gray600};
   border: none;
-  display: flex;
+  display: ${({ isPossible }) => (isPossible ? "flex" : "none")};
   align-items: center;
   justify-content: center;
   cursor: pointer;
