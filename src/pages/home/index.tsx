@@ -1,36 +1,36 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react"; //useRef,
 import { styled } from "styled-components";
 import { useStockSearch } from "../../hooks/useStockQuery";
 import { Stock } from "../../types/stock";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 
-const sections = ["Preview", "Method", "Model", "Main Function"];
+// const sections = ["Preview", "Method", "Model", "Main Function"];
 
 function Home() {
-  const sectionRefs = useRef<HTMLElement[]>([]);
-  const [active, setActive] = useState("Preview");
+  // const sectionRefs = useRef<HTMLElement[]>([]);
+  // const [active, setActive] = useState("Preview");
   const [keyword, setKeyword] = useState("");
   const [searchResult, setSearchResult] = useState<Stock[]>([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.getAttribute("data-id");
-            if (id) setActive(id);
-          }
-        });
-      },
-      { threshold: 0.6 }
-    );
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       entries.forEach((entry) => {
+  //         if (entry.isIntersecting) {
+  //           const id = entry.target.getAttribute("data-id");
+  //           if (id) setActive(id);
+  //         }
+  //       });
+  //     },
+  //     { threshold: 0.6 }
+  //   );
 
-    sectionRefs.current.forEach((el) => el && observer.observe(el));
+  //   sectionRefs.current.forEach((el) => el && observer.observe(el));
 
-    return () => observer.disconnect();
-  }, []);
+  //   return () => observer.disconnect();
+  // }, []);
 
   const { data: searchData } = useStockSearch(
     { keyword },
@@ -43,10 +43,10 @@ function Home() {
     }
   }, [searchData]);
 
-  const scrollToSection = (id: string) => {
-    const index = sections.findIndex((sec) => sec === id);
-    sectionRefs.current[index]?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToSection = (id: string) => {
+  //   const index = sections.findIndex((sec) => sec === id);
+  //   sectionRefs.current[index]?.scrollIntoView({ behavior: "smooth" });
+  // };
 
   const handleStockPrediction = (item: Stock) => {
     navigate("/detail?ticker=" + item.ticker);
@@ -56,7 +56,7 @@ function Home() {
     <>
       <Navbar>
         <img src={logo} alt="logo" style={{ width: "40px", height: "auto" }} />
-        {sections.map((item) => (
+        {/* {sections.map((item) => (
           <NavItem
             key={item}
             onClick={() => scrollToSection(item)}
@@ -64,7 +64,7 @@ function Home() {
           >
             {item}
           </NavItem>
-        ))}
+        ))} */}
       </Navbar>
       <Main>
         <Title>Stock XAI.</Title>
@@ -103,7 +103,7 @@ function Home() {
         </SearchWrapper>
       </Main>
 
-      <Container>
+      {/* <Container>
         {sections.map((item, index) => (
           <Section
             key={item}
@@ -117,7 +117,7 @@ function Home() {
             <DummyContent />
           </Section>
         ))}
-      </Container>
+      </Container> */}
     </>
   );
 }
@@ -177,6 +177,7 @@ const Main = styled.main`
   padding: 160px 32px;
   gap: 14px;
   background-color: ${({ theme }) => theme.systemColor.black};
+  height: 100%;
 `;
 
 const Title = styled.div`
@@ -186,41 +187,41 @@ const Title = styled.div`
   margin-top: 25px;
 `;
 
-const NavItem = styled.div<{ $active: boolean }>`
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
-  color: ${({ $active, theme }) =>
-    $active ? theme.systemColor.white : theme.grayColor.gray500};
-  transition: 0.2s;
-`;
+// const NavItem = styled.div<{ $active: boolean }>`
+//   cursor: pointer;
+//   font-size: 15px;
+//   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
+//   color: ${({ $active, theme }) =>
+//     $active ? theme.systemColor.white : theme.grayColor.gray500};
+//   transition: 0.2s;
+// `;
 
-const Container = styled.div`
-  margin-top: 56px;
-`;
+// const Container = styled.div`
+//   margin-top: 56px;
+// `;
 
-const Section = styled.section`
-  height: 100vh;
-  padding: 80px 32px 32px;
-  background-color: ${({ theme }) => theme.systemColor.white};
-  border-bottom: 1px solid #ccc;
+// const Section = styled.section`
+//   height: 100vh;
+//   padding: 80px 32px 32px;
+//   background-color: ${({ theme }) => theme.systemColor.white};
+//   border-bottom: 1px solid #ccc;
 
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 16px;
-  }
-`;
+//   h2 {
+//     font-size: 2rem;
+//     margin-bottom: 16px;
+//   }
+// `;
 
-const DummyContent = () => (
-  <div>
-    {[...Array(5)].map((_, i) => (
-      <p key={i}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at
-        vestibulum magna.
-      </p>
-    ))}
-  </div>
-);
+// const DummyContent = () => (
+//   <div>
+//     {[...Array(5)].map((_, i) => (
+//       <p key={i}>
+//         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at
+//         vestibulum magna.
+//       </p>
+//     ))}
+//   </div>
+// );
 
 const SearchWrapper = styled.div`
   position: relative;
