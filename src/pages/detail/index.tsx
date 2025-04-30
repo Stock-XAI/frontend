@@ -285,26 +285,6 @@ const Section = styled.section`
   }
 `;
 
-const NewsList = styled.ul`
-  list-style: none;
-  padding: 0;
-
-  li {
-    margin-bottom: 16px;
-    background-color: ${({ theme }) => theme.grayColor.gray100};
-    padding: 12px;
-    border-radius: 8px;
-  }
-
-  p {
-    margin: 4px 0;
-  }
-
-  span {
-    font-size: 20px;
-  }
-`;
-
 const SearchResultContainer = styled.div`
   position: absolute;
   top: 110%;
