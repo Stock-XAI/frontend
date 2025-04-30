@@ -1,36 +1,36 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react"; //useRef,
 import { styled } from "styled-components";
 import { useStockSearch } from "../../hooks/useStockQuery";
 import { Stock } from "../../types/stock";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 
-const sections = ["Preview", "Method", "Model", "Main Function"];
+// const sections = ["Preview", "Method", "Model", "Main Function"];
 
 function Home() {
-  const sectionRefs = useRef<HTMLElement[]>([]);
-  const [active, setActive] = useState("Preview");
+  // const sectionRefs = useRef<HTMLElement[]>([]);
+  // const [active, setActive] = useState("Preview");
   const [keyword, setKeyword] = useState("");
   const [searchResult, setSearchResult] = useState<Stock[]>([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.getAttribute("data-id");
-            if (id) setActive(id);
-          }
-        });
-      },
-      { threshold: 0.6 }
-    );
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       entries.forEach((entry) => {
+  //         if (entry.isIntersecting) {
+  //           const id = entry.target.getAttribute("data-id");
+  //           if (id) setActive(id);
+  //         }
+  //       });
+  //     },
+  //     { threshold: 0.6 }
+  //   );
 
-    sectionRefs.current.forEach((el) => el && observer.observe(el));
+  //   sectionRefs.current.forEach((el) => el && observer.observe(el));
 
-    return () => observer.disconnect();
-  }, []);
+  //   return () => observer.disconnect();
+  // }, []);
 
   const { data: searchData } = useStockSearch(
     { keyword },
@@ -43,10 +43,10 @@ function Home() {
     }
   }, [searchData]);
 
-  const scrollToSection = (id: string) => {
-    const index = sections.findIndex((sec) => sec === id);
-    sectionRefs.current[index]?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToSection = (id: string) => {
+  //   const index = sections.findIndex((sec) => sec === id);
+  //   sectionRefs.current[index]?.scrollIntoView({ behavior: "smooth" });
+  // };
 
   const handleStockPrediction = (item: Stock) => {
     navigate("/detail?ticker=" + item.ticker);
@@ -56,7 +56,7 @@ function Home() {
     <>
       <Navbar>
         <img src={logo} alt="logo" style={{ width: "40px", height: "auto" }} />
-        {sections.map((item) => (
+        {/* {sections.map((item) => (
           <NavItem
             key={item}
             onClick={() => scrollToSection(item)}
@@ -64,7 +64,7 @@ function Home() {
           >
             {item}
           </NavItem>
-        ))}
+        ))} */}
       </Navbar>
       <Main>
         <Title>Stock XAI.</Title>
@@ -103,7 +103,7 @@ function Home() {
         </SearchWrapper>
       </Main>
 
-      <Container>
+      {/* <Container>
         {sections.map((item, index) => (
           <Section
             key={item}
@@ -117,7 +117,7 @@ function Home() {
             <DummyContent />
           </Section>
         ))}
-      </Container>
+      </Container> */}
     </>
   );
 }
@@ -130,26 +130,26 @@ const Navbar = styled.nav`
   left: 0;
   display: flex;
   gap: 36px;
-  height: 80px;
+  height: 64px;
   width: 100%;
   background-color: ${({ theme }) => theme.systemColor.black};
   color: white;
   align-items: center;
-  padding: 0 30px;
+  padding: 0 24px;
   z-index: 1000;
   border-bottom: ${({ theme }) => `1px solid ${theme.grayColor.gray800}`};
 `;
 
 const Input = styled.input`
   width: 100%;
-  height: 70px;
-  padding: 0 20px;
+  height: 56px;
+  padding: 0 16px;
   border: 1px solid ${({ theme }) => theme.grayColor.gray600};
   border-radius: 16px;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 400;
   color: ${({ theme }) => theme.grayColor.gray100};
-  margin-top: 32px;
+  margin-top: 26px;
   transition: 0.2s;
   background-color: ${({ theme }) => theme.grayColor.gray700};
   &:focus {
@@ -158,13 +158,13 @@ const Input = styled.input`
   }
   &::placeholder {
     color: ${({ theme }) => theme.grayColor.gray400};
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 400;
   }
 `;
 
 const SubContent = styled.div`
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 400;
   color: ${({ theme }) => theme.grayColor.gray400};
 `;
@@ -174,53 +174,54 @@ const Main = styled.main`
   flex-direction: column;
   justify-content: start;
   align-items: start;
-  padding: 200px 40px;
-  gap: 16px;
+  padding: 160px 32px;
+  gap: 14px;
   background-color: ${({ theme }) => theme.systemColor.black};
+  height: 100%;
 `;
 
 const Title = styled.div`
-  font-size: 96px;
+  font-size: 76px;
   font-weight: 700;
   color: ${({ theme }) => theme.grayColor.gray100};
-  margin-top: 32px;
+  margin-top: 25px;
 `;
 
-const NavItem = styled.div<{ $active: boolean }>`
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
-  color: ${({ $active, theme }) =>
-    $active ? theme.systemColor.white : theme.grayColor.gray500};
-  transition: 0.2s;
-`;
+// const NavItem = styled.div<{ $active: boolean }>`
+//   cursor: pointer;
+//   font-size: 15px;
+//   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
+//   color: ${({ $active, theme }) =>
+//     $active ? theme.systemColor.white : theme.grayColor.gray500};
+//   transition: 0.2s;
+// `;
 
-const Container = styled.div`
-  margin-top: 70px;
-`;
+// const Container = styled.div`
+//   margin-top: 56px;
+// `;
 
-const Section = styled.section`
-  height: 100vh;
-  padding: 100px 40px 40px;
-  background-color: ${({ theme }) => theme.systemColor.white};
-  border-bottom: 1px solid #ccc;
+// const Section = styled.section`
+//   height: 100vh;
+//   padding: 80px 32px 32px;
+//   background-color: ${({ theme }) => theme.systemColor.white};
+//   border-bottom: 1px solid #ccc;
 
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 16px;
-  }
-`;
+//   h2 {
+//     font-size: 2rem;
+//     margin-bottom: 16px;
+//   }
+// `;
 
-const DummyContent = () => (
-  <div>
-    {[...Array(5)].map((_, i) => (
-      <p key={i}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at
-        vestibulum magna.
-      </p>
-    ))}
-  </div>
-);
+// const DummyContent = () => (
+//   <div>
+//     {[...Array(5)].map((_, i) => (
+//       <p key={i}>
+//         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at
+//         vestibulum magna.
+//       </p>
+//     ))}
+//   </div>
+// );
 
 const SearchWrapper = styled.div`
   position: relative;
@@ -236,11 +237,11 @@ const SearchResultContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.grayColor.gray400};
   border-radius: 8px;
   z-index: 999;
-  padding: 12px;
+  padding: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 
   h3 {
-    font-size: 16px;
+    font-size: 14px;
     color: ${({ theme }) => theme.grayColor.gray500};
   }
 
@@ -252,11 +253,11 @@ const SearchResultContainer = styled.div`
 `;
 
 const StockInfoItem = styled.li`
-  padding: 16px 12px;
+  padding: 14px 10px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
-  font-size: 16px;
+  font-size: 14px;
 
   &:hover {
     background-color: ${({ theme }) => theme.grayColor.gray100};
