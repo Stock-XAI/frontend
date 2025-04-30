@@ -91,12 +91,12 @@ export const BottomWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 8px;
 `;
 
 export const NavButton = styled.button`
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.grayColor.gray600};
   border: none;
@@ -123,7 +123,7 @@ export const MoreButton = styled.button`
   background-color: ${({ theme }) => theme.grayColor.gray700};
   opacity: 0.8;
   border-radius: 10px;
-  padding: 10px;
+  padding: 8px;
   opacity: 0.5;
   color: ${({ theme }) => theme.systemColor.white};
 `;
@@ -131,7 +131,7 @@ export const MoreButton = styled.button`
 export const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 700px;
+  height: 560px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -141,11 +141,11 @@ export const ProviderWrapper = styled.div`
   display: flex;
   justify-content: end;
   align-items: end;
-  font-size: 18px;
+  font-size: 15px;
   color: ${({ theme }) => theme.grayColor.gray800};
   font-weight: bold;
   width: 100%;
-  padding: 0 10px;
+  padding: 0 8px;
 `;
 
 export const DateWrapper = styled.div`
@@ -153,31 +153,31 @@ export const DateWrapper = styled.div`
   width: 100%;
   justify-content: end;
   align-items: end;
-  font-size: 18px;
+  font-size: 16px;
   color: ${({ theme }) => theme.grayColor.gray500};
-  padding: 15px;
-  padding-top: 5px;
-  padding-bottom: 20px;
+  padding: 12px;
+  padding-top: 4px;
+  padding-bottom: 16px;
 `;
 
 export const TitleWrapper = styled.h1<{ isCenter: boolean }>`
   margin: 0;
   line-height: 1.3;
   width: 100%;
-  padding: 20px;
-  border-radius: 10px 10px 0px 0px;
+  padding: 16px;
+  border-radius: 8px 8px 0px 0px;
   background-color: ${({ theme, isCenter }) =>
     isCenter ? theme.grayColor.gray800 : theme.grayColor.gray100};
   color: ${({ isCenter, theme }) =>
     isCenter ? theme.grayColor.gray100 : theme.grayColor.gray800};
-  font-size: 20px;
+  font-size: 16px;
 `;
 
 export const SummaryWrapper = styled.h3`
   margin: 0;
   line-height: 1.3;
   color: ${({ theme }) => theme.grayColor.gray500};
-  font-size: 18px;
+  font-size: 16px;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -195,8 +195,8 @@ export const CarouselItem = styled.div<{
   isVisible: boolean;
 }>`
   position: absolute;
-  width: 450px;
-  height: 500px;
+  width: 360px;
+  height: 400px;
   /* background: ${({ isCenter, theme }) =>
     isCenter
       ? `linear-gradient(to bottom, ${theme.grayColor.gray100}, ${theme.grayColor.gray800})`
