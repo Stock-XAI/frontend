@@ -18,6 +18,8 @@ jobs:
 
       - name: Build React App
         run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Upload to S3
         uses: jakejarvis/s3-sync-action@master
