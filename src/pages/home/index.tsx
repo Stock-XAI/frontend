@@ -130,26 +130,26 @@ const Navbar = styled.nav`
   left: 0;
   display: flex;
   gap: 36px;
-  height: 80px;
+  height: 64px;
   width: 100%;
   background-color: ${({ theme }) => theme.systemColor.black};
   color: white;
   align-items: center;
-  padding: 0 30px;
+  padding: 0 24px;
   z-index: 1000;
   border-bottom: ${({ theme }) => `1px solid ${theme.grayColor.gray800}`};
 `;
 
 const Input = styled.input`
   width: 100%;
-  height: 70px;
-  padding: 0 20px;
+  height: 56px;
+  padding: 0 16px;
   border: 1px solid ${({ theme }) => theme.grayColor.gray600};
   border-radius: 16px;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 400;
   color: ${({ theme }) => theme.grayColor.gray100};
-  margin-top: 32px;
+  margin-top: 26px;
   transition: 0.2s;
   background-color: ${({ theme }) => theme.grayColor.gray700};
   &:focus {
@@ -158,13 +158,13 @@ const Input = styled.input`
   }
   &::placeholder {
     color: ${({ theme }) => theme.grayColor.gray400};
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 400;
   }
 `;
 
 const SubContent = styled.div`
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 400;
   color: ${({ theme }) => theme.grayColor.gray400};
 `;
@@ -174,21 +174,21 @@ const Main = styled.main`
   flex-direction: column;
   justify-content: start;
   align-items: start;
-  padding: 200px 40px;
-  gap: 16px;
+  padding: 160px 32px;
+  gap: 14px;
   background-color: ${({ theme }) => theme.systemColor.black};
 `;
 
 const Title = styled.div`
-  font-size: 96px;
+  font-size: 76px;
   font-weight: 700;
   color: ${({ theme }) => theme.grayColor.gray100};
-  margin-top: 32px;
+  margin-top: 25px;
 `;
 
 const NavItem = styled.div<{ $active: boolean }>`
   cursor: pointer;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
   color: ${({ $active, theme }) =>
     $active ? theme.systemColor.white : theme.grayColor.gray500};
@@ -196,12 +196,12 @@ const NavItem = styled.div<{ $active: boolean }>`
 `;
 
 const Container = styled.div`
-  margin-top: 70px;
+  margin-top: 56px;
 `;
 
 const Section = styled.section`
   height: 100vh;
-  padding: 100px 40px 40px;
+  padding: 80px 32px 32px;
   background-color: ${({ theme }) => theme.systemColor.white};
   border-bottom: 1px solid #ccc;
 
@@ -236,11 +236,11 @@ const SearchResultContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.grayColor.gray400};
   border-radius: 8px;
   z-index: 999;
-  padding: 12px;
+  padding: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 
   h3 {
-    font-size: 16px;
+    font-size: 14px;
     color: ${({ theme }) => theme.grayColor.gray500};
   }
 
@@ -252,11 +252,11 @@ const SearchResultContainer = styled.div`
 `;
 
 const StockInfoItem = styled.li`
-  padding: 16px 12px;
+  padding: 14px 10px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
-  font-size: 16px;
+  font-size: 14px;
 
   &:hover {
     background-color: ${({ theme }) => theme.grayColor.gray100};
