@@ -4,6 +4,7 @@ import { useStockSearch } from "../../hooks/useStockQuery";
 import { Stock } from "../../types/stock";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import Dropdown from "../../components/dropdown";
 
 // const sections = ["Preview", "Method", "Model", "Main Function"];
 
@@ -13,6 +14,7 @@ function Home() {
   const [keyword, setKeyword] = useState("");
   const [searchResult, setSearchResult] = useState<Stock[]>([]);
   const navigate = useNavigate();
+  const [horizon, setHorizon] = useState(1);
 
   // useEffect(() => {
   //   const observer = new IntersectionObserver(
@@ -49,7 +51,8 @@ function Home() {
   // };
 
   const handleStockPrediction = (item: Stock) => {
-    navigate("/detail?ticker=" + item.ticker);
+    // navigate("/detail?ticker=" + item.ticker);
+    navigate("/detail?ticker=" + item.ticker + "horizon=" + horizon);
   };
 
   return (
@@ -74,6 +77,7 @@ function Home() {
           even more accurate inferences.
         </SubContent>
         <SearchWrapper>
+          <Dropdown onSelect={setHorizon} />
           <Input
             placeholder="Enter the Stock Ticker or Name."
             value={keyword}
@@ -167,6 +171,7 @@ const SubContent = styled.div`
   font-size: 24px;
   font-weight: 400;
   color: ${({ theme }) => theme.grayColor.gray400};
+  padding-bottom: 10px;
 `;
 
 const Main = styled.main`
