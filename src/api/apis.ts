@@ -2,7 +2,6 @@ import { Stock, StockInfo } from "../types/stock";
 import instance from "./instance";
 
 export async function getStockInfo(params: StockInfoParams) {
-  console.log("getStockInfo", params);
   const res = await instance.get<StockInfoResponse>("stock-info", {
     params: params,
   });
