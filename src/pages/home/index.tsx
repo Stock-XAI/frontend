@@ -51,8 +51,7 @@ function Home() {
   // };
 
   const handleStockPrediction = (item: Stock) => {
-    // navigate("/detail?ticker=" + item.ticker);
-    navigate("/detail?ticker=" + item.ticker + "horizon=" + horizon);
+    navigate(`/detail?ticker=${item.ticker}&horizon=${horizon}`);
   };
 
   return (

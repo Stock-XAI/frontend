@@ -21,7 +21,9 @@ export interface ChartState {
 function Detail() {
   const [searchParams] = useSearchParams();
   const _ticker = searchParams.get("ticker") || "";
+  const _horizon = searchParams.get("horizon") || "";
   const [ticker, setTicker] = useState(_ticker);
+
   const [keyword, setKeyword] = useState("");
   const [stockPredictionResult, setStockPredictionResult] = useState<
     StockInfo | undefined
@@ -31,7 +33,10 @@ function Detail() {
   const [isFocused, setIsFocused] = useState(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
-  const { data: stockInfoData } = useStockInfo({ ticker });
+  const { data: stockInfoData } = useStockInfo({
+    ticker,
+    horizon: Number(_horizon),
+  });
 
   const { data: searchData } = useStockSearch(
     { keyword },
@@ -179,7 +184,8 @@ function Detail() {
               📊 {stockPredictionResult.ticker} Stock Prediction Report
             </Title>
             <ResultWrapper>
-              Predicted for 7 days from now
+              Predicted for {stockPredictionResult.prediction.horizon} days from
+              now
               <ContentWrapper>
                 <img
                   src={
