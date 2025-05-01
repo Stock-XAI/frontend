@@ -76,7 +76,7 @@ function Home() {
           even more accurate inferences.
         </SubContent>
         <SearchWrapper>
-          <Dropdown onSelect={setHorizon} />
+          <Dropdown onSelect={setHorizon} horizon={horizon} />
           <Input
             placeholder="Enter the Stock Ticker or Name."
             value={keyword}

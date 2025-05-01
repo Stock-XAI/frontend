@@ -9,6 +9,7 @@ import { ApexOptions } from "apexcharts";
 import Carousel from "../../components/slider";
 import RiseIcon from "../../assets/rise.svg";
 import FallIcon from "../../assets/fall.svg";
+import Dropdown from "../../components/dropdown";
 
 export interface ChartState {
   series: {
@@ -25,6 +26,7 @@ function Detail() {
   const [ticker, setTicker] = useState(_ticker);
 
   const [keyword, setKeyword] = useState("");
+  const [horizon, setHorizon] = useState(Number(_horizon));
   const [stockPredictionResult, setStockPredictionResult] = useState<
     StockInfo | undefined
   >(undefined);
@@ -35,7 +37,7 @@ function Detail() {
 
   const { data: stockInfoData } = useStockInfo({
     ticker,
-    horizon: Number(_horizon),
+    horizon: horizon,
   });
 
   const { data: searchData } = useStockSearch(
@@ -143,6 +145,7 @@ function Detail() {
       </Navbar>
       <Main>
         <SearchWrapper>
+          <Dropdown horizon={horizon} onSelect={setHorizon} />
           <Input
             placeholder="Enter the Stock Ticker or Name."
             value={keyword}

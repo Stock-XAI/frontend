@@ -20,11 +20,12 @@ const dropdownVariants = {
 
 type Props = {
   onSelect: (o: number) => void;
+  horizon: number;
 };
 
-function Dropdown({ onSelect }: Props) {
+function Dropdown({ horizon, onSelect }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(1);
+  const [selected, setSelected] = useState(horizon);
   const options = [1, 7, 30];
 
   const handleOnClick = (option: number) => {
