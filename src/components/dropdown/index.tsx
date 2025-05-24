@@ -52,19 +52,19 @@ function Dropdown({ horizon, onSelect }: Props) {
               position: "absolute",
               listStyle: "none",
               padding: 0,
-              margin: 0,
+              marginTop: "-12px",
               backgroundColor: "#202020",
               zIndex: 1,
               width: "100%",
               boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-              borderRadius: "4px",
+              borderRadius: "0 0 16px 16px",
             }}
           >
             {options.map((option) => (
               <li
                 key={option}
                 style={{
-                  padding: "8px 12px",
+                  padding: "12px 12px",
                   cursor: "pointer",
                   color: "white",
                 }}
@@ -84,7 +84,6 @@ export default Dropdown;
 
 export const DisplayWrapper = styled.button`
   all: unset; /* 브라우저 기본 스타일 제거 */
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -92,7 +91,8 @@ export const DisplayWrapper = styled.button`
   font-size: 16px;
   color: ${({ theme }) => theme.grayColor.gray100};
   background: ${({ theme }) => theme.grayColor.gray800};
-  padding: 10px 20px;
-  border-radius: 12px;
+  padding: 0 20px;
+  height: 56px;
+  border-radius: 16px;
   cursor: pointer;
 `;

@@ -77,32 +77,34 @@ function Home() {
         </SubContent>
         <SearchWrapper>
           <Dropdown onSelect={setHorizon} horizon={horizon} />
-          <Input
-            placeholder="Enter the Stock Ticker or Name."
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-          />
-          {keyword.length > 0 && searchResult.length > 0 && (
-            <SearchResultContainer>
-              <ul>
-                {searchResult.map((item) => (
-                  <StockInfoItem
-                    key={item.ticker}
-                    onClick={() => {
-                      handleStockPrediction(item);
-                    }}
-                  >
-                    <strong>{item.ticker}</strong> - {item.name}
-                  </StockInfoItem>
-                ))}
-              </ul>
-            </SearchResultContainer>
-          )}
-          {keyword.length > 0 && searchResult.length === 0 && (
-            <SearchResultContainer>
-              <h3>No results found.</h3>
-            </SearchResultContainer>
-          )}
+          <InputWrapper>
+            <Input
+              placeholder="Enter the Stock Ticker or Name."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+            />
+            {keyword.length > 0 && searchResult.length > 0 && (
+              <SearchResultContainer>
+                <ul>
+                  {searchResult.map((item) => (
+                    <StockInfoItem
+                      key={item.ticker}
+                      onClick={() => {
+                        handleStockPrediction(item);
+                      }}
+                    >
+                      <strong>{item.ticker}</strong> - {item.name}
+                    </StockInfoItem>
+                  ))}
+                </ul>
+              </SearchResultContainer>
+            )}
+            {keyword.length > 0 && searchResult.length === 0 && (
+              <SearchResultContainer>
+                <h3>No results found.</h3>
+              </SearchResultContainer>
+            )}
+          </InputWrapper>
         </SearchWrapper>
       </Main>
 
@@ -144,7 +146,8 @@ const Navbar = styled.nav`
 `;
 
 const Input = styled.input`
-  width: 100%;
+  /* width: 100%; */
+  flex-grow: 1;
   height: 56px;
   padding: 0 16px;
   border: 1px solid ${({ theme }) => theme.grayColor.gray600};
@@ -152,7 +155,6 @@ const Input = styled.input`
   font-size: 20px;
   font-weight: 400;
   color: ${({ theme }) => theme.grayColor.gray100};
-  margin-top: 26px;
   transition: 0.2s;
   background-color: ${({ theme }) => theme.grayColor.gray700};
   &:focus {
@@ -229,7 +231,20 @@ const Title = styled.div`
 
 const SearchWrapper = styled.div`
   position: relative;
+  display: flex;
   width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+`;
+
+const InputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 `;
 
 const SearchResultContainer = styled.div`

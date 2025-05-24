@@ -58,6 +58,12 @@ function Detail() {
   }, [ticker]);
 
   useEffect(() => {
+    if (horizon) {
+      setIsSearching(true);
+    }
+  }, [horizon]);
+
+  useEffect(() => {
     if (isSearching) {
       document.body.style.overflow = "hidden";
     } else {
@@ -146,38 +152,40 @@ function Detail() {
       <Main>
         <SearchWrapper>
           <Dropdown horizon={horizon} onSelect={setHorizon} />
-          <Input
-            placeholder="Enter the Stock Ticker or Name."
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => {
-              setTimeout(() => {
-                setIsFocused(false);
-              }, 200);
-            }}
-          />
-          {isFocused && keyword.length > 0 && searchResult.length > 0 && (
-            <SearchResultContainer>
-              <ul>
-                {searchResult.map((item) => (
-                  <StockInfoItem
-                    key={item.ticker}
-                    onClick={() => {
-                      handleStockPrediction(item);
-                    }}
-                  >
-                    <strong>{item.ticker}</strong> - {item.name}
-                  </StockInfoItem>
-                ))}
-              </ul>
-            </SearchResultContainer>
-          )}
-          {isFocused && keyword.length > 0 && searchResult.length === 0 && (
-            <SearchResultContainer>
-              <h3>No results found.</h3>
-            </SearchResultContainer>
-          )}
+          <InputWrapper>
+            <Input
+              placeholder="Enter the Stock Ticker or Name."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => {
+                setTimeout(() => {
+                  setIsFocused(false);
+                }, 200);
+              }}
+            />
+            {isFocused && keyword.length > 0 && searchResult.length > 0 && (
+              <SearchResultContainer>
+                <ul>
+                  {searchResult.map((item) => (
+                    <StockInfoItem
+                      key={item.ticker}
+                      onClick={() => {
+                        handleStockPrediction(item);
+                      }}
+                    >
+                      <strong>{item.ticker}</strong> - {item.name}
+                    </StockInfoItem>
+                  ))}
+                </ul>
+              </SearchResultContainer>
+            )}
+            {isFocused && keyword.length > 0 && searchResult.length === 0 && (
+              <SearchResultContainer>
+                <h3>No results found.</h3>
+              </SearchResultContainer>
+            )}
+          </InputWrapper>
         </SearchWrapper>
       </Main>
       <Container>
@@ -343,7 +351,6 @@ const Input = styled.input`
   font-size: 20px;
   font-weight: 400;
   color: ${({ theme }) => theme.grayColor.gray100};
-  margin-top: 26px;
   transition: 0.2s;
   background-color: ${({ theme }) => theme.grayColor.gray700};
   &:focus {
@@ -373,7 +380,11 @@ const Container = styled.div`
 
 const SearchWrapper = styled.div`
   position: relative;
+  display: flex;
   width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 `;
 
 const Section = styled.section`
@@ -439,4 +450,13 @@ const Spinner = styled.div`
       transform: rotate(360deg);
     }
   }
+`;
+
+const InputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 `;
