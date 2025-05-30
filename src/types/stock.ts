@@ -16,7 +16,13 @@ export interface News {
 
 export interface Prediction {
   horizon: number;
-  result: "Rise" | "Fall";
+  result:
+    | "Rise"
+    | "Fall"
+    | "Strong Rise"
+    | "Strong Fall"
+    | "Slight Rise"
+    | "Slight Fall";
 }
 
 export interface Explanation {

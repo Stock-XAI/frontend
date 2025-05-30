@@ -200,7 +200,7 @@ function Detail() {
               <ContentWrapper>
                 <img
                   src={
-                    stockPredictionResult.prediction.result == "Rise"
+                    stockPredictionResult.prediction.result.includes("Rise")
                       ? RiseIcon
                       : FallIcon
                   }
