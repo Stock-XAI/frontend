@@ -10,14 +10,9 @@ import Carousel from "../../components/slider";
 import RiseIcon from "../../assets/rise.svg";
 import FallIcon from "../../assets/fall.svg";
 import Dropdown from "../../components/dropdown";
-
-export interface ChartState {
-  series: {
-    name: string;
-    data: number[];
-  }[];
-  options: ApexOptions;
-}
+import ColumnChart from "../../components/charts/column";
+import AreaChart from "../../components/charts/area";
+import PosNegChart from "../../components/charts/posneg";
 
 function Detail() {
   const [searchParams] = useSearchParams();
@@ -244,7 +239,20 @@ function Detail() {
                   </MenuItem>
                 ))}
               </MenuWrapper>
-              <div>hihihi</div>
+              <div
+                style={{
+                  height: "80px",
+                }}
+              ></div>
+              {/* <div>hihihi</div> */}
+
+              {activeIndex == 0 ? (
+                <ColumnChart />
+              ) : activeIndex == 1 ? (
+                <AreaChart />
+              ) : (
+                <PosNegChart />
+              )}
             </Section>
             <SectionWrapper>
               {/* <Section>
@@ -440,6 +448,8 @@ const SearchWrapper = styled.div`
 `;
 
 const Section = styled.section`
+  display: flex;
+  flex-direction: column;
   padding: 32px;
   /* border-bottom: 1px solid ${({ theme }) => theme.grayColor.gray300}; */
   background-color: ${({ theme }) => theme.systemColor.white};
@@ -448,6 +458,7 @@ const Section = styled.section`
     margin-bottom: 14px;
   }
   font-size: 16px;
+  gap: 20px;
 `;
 
 const SearchResultContainer = styled.div`
