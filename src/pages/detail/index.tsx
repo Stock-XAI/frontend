@@ -195,12 +195,11 @@ function Detail() {
               📊 {stockPredictionResult.ticker} Stock Prediction Report
             </Title>
             <ResultWrapper>
-              Predicted for {stockPredictionResult.prediction.horizon} days from
-              now
+              Predicted for {horizon} days from now
               <ContentWrapper>
                 <img
                   src={
-                    stockPredictionResult.prediction.result.includes("Rise")
+                    stockPredictionResult.prediction.result > 0
                       ? RiseIcon
                       : FallIcon
                   }

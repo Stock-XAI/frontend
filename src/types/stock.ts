@@ -15,20 +15,13 @@ export interface News {
 }
 
 export interface Prediction {
-  horizon: number;
-  result:
-    | "Rise"
-    | "Fall"
-    | "Strong Rise"
-    | "Strong Fall"
-    | "Slight Rise"
-    | "Slight Fall";
+  predicted_date: string;
+  result: number;
 }
 
 export interface Explanation {
-  why: string;
-  shapValues: number[];
-  features: string[];
+  tokens: string[];
+  token_scores: number[];
 }
 
 export interface Stock {
