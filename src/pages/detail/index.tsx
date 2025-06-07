@@ -10,14 +10,9 @@ import Carousel from "../../components/slider";
 import RiseIcon from "../../assets/rise.svg";
 import FallIcon from "../../assets/fall.svg";
 import Dropdown from "../../components/dropdown";
-
-export interface ChartState {
-  series: {
-    name: string;
-    data: number[];
-  }[];
-  options: ApexOptions;
-}
+import ColumnChart from "../../components/charts/column";
+import AreaChart from "../../components/charts/area";
+import PosNegChart from "../../components/charts/posneg";
 
 function Detail() {
   const [searchParams] = useSearchParams();
@@ -39,6 +34,10 @@ function Detail() {
     ticker,
     horizon: horizon,
   });
+
+  const menus = ["By Date", "By Stock Price", "By Change"];
+
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const { data: searchData } = useStockSearch(
     { keyword },
@@ -77,6 +76,25 @@ function Detail() {
       y: [item.open, item.high, item.low, item.close],
     }));
   }, [stockInfoData?.data.chartData]);
+
+  const DateData = useMemo(() => {
+    const result: Record<string, number[]> = {};
+    const tokens = stockInfoData?.data.explanation.tokens;
+    const tokenScores = stockInfoData?.data.explanation.token_scores;
+
+    if (!tokens || !tokenScores) return {};
+
+    for (let i = 0; i < tokens.length; i += 7) {
+      const date = tokens[i].replace(",", "");
+      const rawScores = tokenScores.slice(i, i + 7);
+
+      const scores = rawScores.map((score) => Number(score.toFixed(3)));
+
+      result[date] = scores;
+    }
+
+    return result;
+  }, [stockInfoData?.data.explanation]);
 
   useEffect(() => {
     setState({
@@ -224,6 +242,37 @@ function Detail() {
               <h2>Related News</h2>
               <Carousel data={stockPredictionResult.news} />
             </Section>
+            <Section>
+              <h2>Detail Exaplanations</h2>
+              <MenuWrapper>
+                <Highlight
+                  style={{ transform: `translateX(${activeIndex * 100}%)` }}
+                />
+                {menus.map((label, index) => (
+                  <MenuItem
+                    key={label}
+                    isActive={activeIndex === index}
+                    onClick={() => setActiveIndex(index)}
+                  >
+                    {label}
+                  </MenuItem>
+                ))}
+              </MenuWrapper>
+              <div
+                style={{
+                  height: "80px",
+                }}
+              ></div>
+              {/* <div>hihihi</div> */}
+
+              {activeIndex == 0 ? (
+                <ColumnChart data={DateData} />
+              ) : activeIndex == 1 ? (
+                <AreaChart />
+              ) : (
+                <PosNegChart />
+              )}
+            </Section>
             <SectionWrapper>
               {/* <Section>
                 <h2>Inferences</h2>
@@ -269,6 +318,37 @@ const Navbar = styled.nav`
   padding: 0 24px;
   z-index: 1000;
   border-bottom: ${({ theme }) => `1px solid ${theme.grayColor.gray800}`};
+`;
+
+const MenuWrapper = styled.div`
+  position: relative;
+  display: flex;
+  height: 40px;
+  background: ${({ theme }) => theme.grayColor.gray100};
+  overflow: hidden;
+`;
+
+const MenuItem = styled.div<{ isActive: boolean }>`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  cursor: pointer;
+  color: ${({ isActive, theme }) =>
+    isActive ? theme.systemColor.white : theme.grayColor.gray400};
+  transition: color 0.3s ease;
+`;
+
+const Highlight = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / 3);
+  height: 100%;
+  background-color: ${({ theme }) => theme.grayColor.gray700};
+  transition: transform 0.3s ease;
+  z-index: 0;
 `;
 
 const Overlay = styled.div`
@@ -387,6 +467,8 @@ const SearchWrapper = styled.div`
 `;
 
 const Section = styled.section`
+  display: flex;
+  flex-direction: column;
   padding: 32px;
   /* border-bottom: 1px solid ${({ theme }) => theme.grayColor.gray300}; */
   background-color: ${({ theme }) => theme.systemColor.white};
@@ -395,6 +477,7 @@ const Section = styled.section`
     margin-bottom: 14px;
   }
   font-size: 16px;
+  gap: 20px;
 `;
 
 const SearchResultContainer = styled.div`
