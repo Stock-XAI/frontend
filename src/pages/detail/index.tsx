@@ -77,6 +77,25 @@ function Detail() {
     }));
   }, [stockInfoData?.data.chartData]);
 
+  const DateData = useMemo(() => {
+    const result: Record<string, number[]> = {};
+    const tokens = stockInfoData?.data.explanation.tokens;
+    const tokenScores = stockInfoData?.data.explanation.token_scores;
+
+    if (!tokens || !tokenScores) return {};
+
+    for (let i = 0; i < tokens.length; i += 7) {
+      const date = tokens[i].replace(",", "");
+      const rawScores = tokenScores.slice(i, i + 7);
+
+      const scores = rawScores.map((score) => Number(score.toFixed(3)));
+
+      result[date] = scores;
+    }
+
+    return result;
+  }, [stockInfoData?.data.explanation]);
+
   useEffect(() => {
     setState({
       ...state,
@@ -247,7 +266,7 @@ function Detail() {
               {/* <div>hihihi</div> */}
 
               {activeIndex == 0 ? (
-                <ColumnChart />
+                <ColumnChart data={DateData} />
               ) : activeIndex == 1 ? (
                 <AreaChart />
               ) : (

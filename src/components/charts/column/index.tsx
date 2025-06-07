@@ -1,9 +1,18 @@
-// BarChart.tsx
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import { useEffect, useState } from "react";
 
-const ColumnChart = () => {
-  const series = [
+type Props = {
+  data: Record<string, number[]> | "undefined";
+};
+
+const ColumnChart = ({ data }: Props) => {
+  const [series, setSeries] = useState<
+    {
+      name: string;
+      data: number[];
+    }[]
+  >([
     {
       name: "PRODUCT A",
       data: [44, 55, 41, 67, 22, 43],
@@ -20,7 +29,30 @@ const ColumnChart = () => {
       name: "PRODUCT D",
       data: [21, 7, 25, 13, 22, 8],
     },
-  ];
+  ]);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!data || typeof data !== "object") return;
+
+    const sortedDates = Object.keys(data).sort();
+    setCategories(sortedDates);
+
+    const newSeries = [
+      "Date String",
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Changes",
+    ].map((label, i) => ({
+      name: label,
+      data: sortedDates.map((date) => data[date][i]),
+    }));
+
+    setSeries(newSeries);
+  }, [data]);
 
   const options: ApexOptions = {
     chart: {
@@ -32,6 +64,18 @@ const ColumnChart = () => {
       zoom: {
         enabled: false,
       },
+    },
+    colors: [
+      "#f2f2f2",
+      "#d9d9d9",
+      "#bfbfbf",
+      "#a6a6a6",
+      "#8c8c8c",
+      "#737373",
+      "#595959",
+    ],
+    dataLabels: {
+      enabled: false,
     },
     responsive: [
       {
@@ -49,11 +93,11 @@ const ColumnChart = () => {
       bar: {
         horizontal: false,
         borderRadius: 10,
-        borderRadiusApplication: "end", // ApexCharts 3.38.0 이상부터 지원
+        borderRadiusApplication: "end",
         borderRadiusWhenStacked: "last",
         dataLabels: {
           total: {
-            enabled: true,
+            enabled: false,
             style: {
               fontSize: "13px",
               fontWeight: 900,
@@ -63,15 +107,9 @@ const ColumnChart = () => {
       },
     },
     xaxis: {
-      type: "datetime",
-      categories: [
-        "01/01/2011 GMT",
-        "01/02/2011 GMT",
-        "01/03/2011 GMT",
-        "01/04/2011 GMT",
-        "01/05/2011 GMT",
-        "01/06/2011 GMT",
-      ],
+      // type: "datetime",
+      type: "category",
+      categories: categories,
     },
     legend: {
       position: "right",
