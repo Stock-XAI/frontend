@@ -40,6 +40,10 @@ function Detail() {
     horizon: horizon,
   });
 
+  const menus = ["By Date", "By Stock Price", "By Change"];
+
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const { data: searchData } = useStockSearch(
     { keyword },
     keyword.length == 0 //disabled -> 검색어가 없을 때
@@ -224,6 +228,24 @@ function Detail() {
               <h2>Related News</h2>
               <Carousel data={stockPredictionResult.news} />
             </Section>
+            <Section>
+              <h2>Detail Exaplanations</h2>
+              <MenuWrapper>
+                <Highlight
+                  style={{ transform: `translateX(${activeIndex * 100}%)` }}
+                />
+                {menus.map((label, index) => (
+                  <MenuItem
+                    key={label}
+                    isActive={activeIndex === index}
+                    onClick={() => setActiveIndex(index)}
+                  >
+                    {label}
+                  </MenuItem>
+                ))}
+              </MenuWrapper>
+              <div>hihihi</div>
+            </Section>
             <SectionWrapper>
               {/* <Section>
                 <h2>Inferences</h2>
@@ -269,6 +291,37 @@ const Navbar = styled.nav`
   padding: 0 24px;
   z-index: 1000;
   border-bottom: ${({ theme }) => `1px solid ${theme.grayColor.gray800}`};
+`;
+
+const MenuWrapper = styled.div`
+  position: relative;
+  display: flex;
+  height: 40px;
+  background: ${({ theme }) => theme.grayColor.gray100};
+  overflow: hidden;
+`;
+
+const MenuItem = styled.div<{ isActive: boolean }>`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  cursor: pointer;
+  color: ${({ isActive, theme }) =>
+    isActive ? theme.systemColor.white : theme.grayColor.gray400};
+  transition: color 0.3s ease;
+`;
+
+const Highlight = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / 3);
+  height: 100%;
+  background-color: ${({ theme }) => theme.grayColor.gray700};
+  transition: transform 0.3s ease;
+  z-index: 0;
 `;
 
 const Overlay = styled.div`
