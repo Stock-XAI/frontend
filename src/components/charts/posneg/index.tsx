@@ -10,7 +10,6 @@ type Props = {
 const types = ["column", "line"];
 
 const PosNegChart = ({ data, xlabel }: Props) => {
-  console.log(data);
   const [label, setLabel] = useState<string[]>([
     "2011-01-01",
     "2011-02-01",
@@ -76,8 +75,10 @@ const PosNegChart = ({ data, xlabel }: Props) => {
 
   const allData = useMemo(() => series.flatMap((s) => s.data), [series]);
   const padding = 0.01; // 예: 1% 여유
-  const minValue = Math.min(...allData) - padding;
-  const maxValue = Math.max(...allData) + padding;
+  const absMax = Math.max(Math.abs(Math.min(...allData)), Math.max(...allData));
+
+  const minValue = -absMax - padding;
+  const maxValue = absMax + padding;
 
   useEffect(() => {
     if (!data || typeof data !== "object") return;
