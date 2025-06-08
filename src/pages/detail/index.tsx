@@ -1,9 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { styled } from "styled-components";
-import { Stock, StockInfo } from "../../types/stock";
+import { Pred, Stock, StockInfo } from "../../types/stock";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { useStockInfo, useStockSearch } from "../../hooks/useStockQuery";
+import {
+  useStockBasic,
+  useStockExplanation,
+  useStockPrediction,
+  useStockSearch,
+} from "../../hooks/useStockQuery";
 import ReactApexChart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import Carousel from "../../components/slider";
@@ -22,15 +27,28 @@ function Detail() {
 
   const [keyword, setKeyword] = useState("");
   const [horizon, setHorizon] = useState(Number(_horizon));
-  const [stockPredictionResult, setStockPredictionResult] = useState<
-    StockInfo | undefined
-  >(undefined);
+  const [stockBasic, setStockBasic] = useState<StockInfo | undefined>(
+    undefined
+  );
+  const [stockPred, setStockPred] = useState<Pred | undefined>(undefined);
   const [searchResult, setSearchResult] = useState<Stock[]>([]);
   const navigate = useNavigate();
   const [isFocused, setIsFocused] = useState(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [isPred, setIsPred] = useState(false);
+  const [isExp, setIsExp] = useState(false);
 
-  const { data: stockInfoData } = useStockInfo({
+  const { data: stockInfoData } = useStockBasic({
+    ticker,
+    horizon: horizon,
+  });
+
+  const { data: predData } = useStockPrediction({
+    ticker,
+    horizon: horizon,
+  });
+
+  const { data: expData } = useStockExplanation({
     ticker,
     horizon: horizon,
   });
@@ -71,18 +89,19 @@ function Detail() {
   }, [isSearching]);
 
   const stockChartData = useMemo(() => {
-    return stockInfoData?.data.chartData.map((item) => ({
+    return stockInfoData?.chartData.map((item) => ({
       x: new Date(item.date),
       y: [item.open, item.high, item.low, item.close],
     }));
-  }, [stockInfoData?.data.chartData]);
+  }, [stockInfoData?.chartData]);
 
   const DateData = useMemo(() => {
     const result: Record<string, number[]> = {};
-    const tokens = stockInfoData?.data.explanation.tokens;
-    const tokenScores = stockInfoData?.data.explanation.token_scores;
+    const tokens = expData?.explanation?.tokens;
+    const tokenScores = expData?.explanation?.token_scores;
 
     if (!tokens || !tokenScores) return {};
+    setIsExp(true);
 
     for (let i = 0; i < tokens.length; i += 7) {
       const date = tokens[i].replace(",", "");
@@ -94,7 +113,14 @@ function Detail() {
     }
 
     return result;
-  }, [stockInfoData?.data.explanation]);
+  }, [expData]);
+
+  useEffect(() => {
+    if (predData) {
+      setStockPred(predData);
+      setIsPred(true);
+    }
+  }, [predData]);
 
   useEffect(() => {
     setState({
@@ -146,7 +172,7 @@ function Detail() {
 
   useEffect(() => {
     if (stockInfoData) {
-      setStockPredictionResult(stockInfoData.data);
+      setStockBasic(stockInfoData);
       setIsSearching(false);
     }
   }, [stockInfoData]);
@@ -207,27 +233,22 @@ function Detail() {
         </SearchWrapper>
       </Main>
       <Container>
-        {stockPredictionResult && (
+        {stockBasic && (
           <>
-            <Title>
-              📊 {stockPredictionResult.ticker} Stock Prediction Report
-            </Title>
-            <ResultWrapper>
-              Predicted for {horizon} days from now
-              <ContentWrapper>
-                <img
-                  src={
-                    stockPredictionResult.prediction.result > 0
-                      ? RiseIcon
-                      : FallIcon
-                  }
-                  width="64px"
-                  height="64px"
-                />
-                {stockPredictionResult.prediction.result}
-              </ContentWrapper>
-            </ResultWrapper>
-
+            <Title>📊 {stockBasic.ticker} Stock Prediction Report</Title>
+            {stockPred && (
+              <ResultWrapper>
+                Predicted for {horizon} days from now
+                <ContentWrapper>
+                  <img
+                    src={stockPred.prediction.result > 0 ? RiseIcon : FallIcon}
+                    width="64px"
+                    height="64px"
+                  />
+                  {stockPred.prediction.result}
+                </ContentWrapper>
+              </ResultWrapper>
+            )}
             <Section>
               <h2>Basic Information</h2>
               <ReactApexChart
@@ -240,10 +261,10 @@ function Detail() {
 
             <Section>
               <h2>Related News</h2>
-              <Carousel data={stockPredictionResult.news} />
+              <Carousel data={stockBasic.news} />
             </Section>
             <Section>
-              <h2>Detail Exaplanations</h2>
+              <h2>Detail Explanations</h2>
               <MenuWrapper>
                 <Highlight
                   style={{ transform: `translateX(${activeIndex * 100}%)` }}

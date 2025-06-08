@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  getExplanation,
+  getPrediction,
   getSearch,
   getStockInfo,
   SearchParams,
@@ -9,8 +11,12 @@ import {
 export const stockKeys = {
   all: ["stock"] as const,
   search: (query: string) => [...stockKeys.all, "search", query] as const,
-  stockInfo: (queries: StockInfoParams) =>
-    [...stockKeys.all, "stockInfo", queries] as const,
+  basic: (queries: StockInfoParams) =>
+    [...stockKeys.all, "basic", queries] as const,
+  pred: (queries: StockInfoParams) =>
+    [...stockKeys.all, "prediction", queries] as const,
+  exp: (queries: StockInfoParams) =>
+    [...stockKeys.all, "explanation", queries] as const,
 };
 
 export function useStockSearch(params: SearchParams, disabled: boolean) {
@@ -23,10 +29,30 @@ export function useStockSearch(params: SearchParams, disabled: boolean) {
   });
 }
 
-export function useStockInfo(params: StockInfoParams) {
+export function useStockBasic(params: StockInfoParams) {
   return useQuery({
-    queryKey: stockKeys.stockInfo(params),
+    queryKey: stockKeys.basic(params),
     queryFn: () => getStockInfo(params),
+    enabled: true, //요청 보낼지 여부, 추후 변수로 관리 가능
+    staleTime: 1000 * 60 * 60 * 1, //한 시간동안 캐시 유지
+    retry: 2,
+  });
+}
+
+export function useStockPrediction(params: StockInfoParams) {
+  return useQuery({
+    queryKey: stockKeys.pred(params),
+    queryFn: () => getPrediction(params),
+    enabled: true, //요청 보낼지 여부, 추후 변수로 관리 가능
+    staleTime: 1000 * 60 * 60 * 1, //한 시간동안 캐시 유지
+    retry: 2,
+  });
+}
+
+export function useStockExplanation(params: StockInfoParams) {
+  return useQuery({
+    queryKey: stockKeys.exp(params),
+    queryFn: () => getExplanation(params),
     enabled: true, //요청 보낼지 여부, 추후 변수로 관리 가능
     staleTime: 1000 * 60 * 60 * 1, //한 시간동안 캐시 유지
     retry: 2,
