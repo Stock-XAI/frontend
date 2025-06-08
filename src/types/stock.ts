@@ -33,6 +33,14 @@ export interface StockInfo {
   ticker: string;
   chartData: ChartData[];
   news: News[];
+}
+
+export interface Pred {
+  ticker: string;
   prediction: Prediction;
+}
+
+export interface Exp {
+  ticker: string;
   explanation: Explanation;
 }
