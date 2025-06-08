@@ -36,8 +36,8 @@ function Detail() {
   const navigate = useNavigate();
   const [isFocused, setIsFocused] = useState(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [isPred, setIsPred] = useState(false);
-  const [isExp, setIsExp] = useState(false);
+  // const [isPred, setIsPred] = useState(false);
+  // const [isExp, setIsExp] = useState(false);
 
   const { data: stockInfoData } = useStockBasic({
     ticker,
@@ -108,7 +108,7 @@ function Detail() {
         : dummyTokenScores;
 
     if (!tokens || !tokenScores) return {};
-    setIsExp(true);
+    // setIsExp(true);
 
     for (let i = 0; i < tokens.length; i += 7) {
       const date = tokens[i].replace(",", "");
@@ -197,7 +197,7 @@ function Detail() {
   useEffect(() => {
     if (predData) {
       setStockPred(predData);
-      setIsPred(true);
+      // setIsPred(true);
     }
   }, [predData]);
 
