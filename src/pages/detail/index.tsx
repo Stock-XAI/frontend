@@ -18,6 +18,7 @@ import Dropdown from "../../components/dropdown";
 import ColumnChart from "../../components/charts/column";
 import AreaChart from "../../components/charts/area";
 import PosNegChart from "../../components/charts/posneg";
+import { dummyTokens, dummyTokenScores } from "../../constants/stock";
 
 function Detail() {
   const [searchParams] = useSearchParams();
@@ -97,8 +98,14 @@ function Detail() {
 
   const DateData = useMemo(() => {
     const result: Record<string, number[]> = {};
-    const tokens = expData?.explanation?.tokens;
-    const tokenScores = expData?.explanation?.token_scores;
+    const tokens =
+      expData?.explanation?.tokens?.length != 0
+        ? expData?.explanation?.tokens
+        : dummyTokens;
+    const tokenScores =
+      expData?.explanation?.token_scores?.length != 0
+        ? expData?.explanation?.token_scores
+        : dummyTokenScores;
 
     if (!tokens || !tokenScores) return {};
     setIsExp(true);
@@ -115,6 +122,78 @@ function Detail() {
     return result;
   }, [expData]);
 
+  const StockData = useMemo(() => {
+    const tokens =
+      expData?.explanation?.tokens?.length != 0
+        ? expData?.explanation?.tokens
+        : dummyTokens;
+    const tokenScores =
+      expData?.explanation?.token_scores?.length != 0
+        ? expData?.explanation?.token_scores
+        : dummyTokenScores;
+
+    if (!tokens || !tokenScores) return { groupedData: {}, dates: [] };
+
+    const groupedData: Record<"Low" | "High" | "Open" | "Close", number[]> = {
+      Low: [],
+      High: [],
+      Open: [],
+      Close: [],
+    };
+
+    const dates: string[] = [];
+
+    for (let i = 0; i < tokens.length; i += 7) {
+      const date = tokens[i].replace(",", "");
+      dates.push(date);
+
+      const rawScores = tokenScores.slice(i, i + 7);
+      const rounded = rawScores.map((s) => Number(s.toFixed(3)));
+
+      groupedData.Low.push(rounded[1]); // Low
+      groupedData.High.push(rounded[2]); // High
+      groupedData.Open.push(rounded[3]); // Open
+      groupedData.Close.push(rounded[4]); // Close
+    }
+
+    return { groupedData, dates };
+  }, [expData]);
+
+  const ChangeData = useMemo(() => {
+    const tokens =
+      expData?.explanation?.tokens?.length != 0
+        ? expData?.explanation?.tokens
+        : dummyTokens;
+    const tokenScores =
+      expData?.explanation?.token_scores?.length != 0
+        ? expData?.explanation?.token_scores
+        : dummyTokenScores;
+
+    if (!tokens || !tokenScores) return { groupedData: {}, dates: [] };
+
+    const groupedData: Record<"Importance" | "Change", number[]> = {
+      Importance: [],
+      Change: [],
+    };
+
+    const dates: string[] = [];
+
+    for (let i = 0; i < tokens.length; i += 7) {
+      const date = tokens[i].replace(",", "");
+      dates.push(date);
+
+      const rawScores = tokenScores.slice(i, i + 7);
+      const rawTokens = tokens.slice(i, i + 7);
+      const rounded = rawScores.map((s) => Number(s.toFixed(3)));
+      const roundedToken = rawTokens.map((s) => Number(s));
+
+      groupedData.Importance.push(rounded[6]); // Change
+      groupedData.Change.push(roundedToken[6]);
+    }
+
+    return { groupedData, dates };
+  }, [expData]);
+
   useEffect(() => {
     if (predData) {
       setStockPred(predData);
@@ -125,9 +204,7 @@ function Detail() {
   useEffect(() => {
     setState({
       ...state,
-      series: [
-        { data: stockChartData || [] }, //항상 배열로 넣기
-      ],
+      series: [{ data: stockChartData || [] }],
     });
   }, [stockChartData]);
 
@@ -289,9 +366,15 @@ function Detail() {
               {activeIndex == 0 ? (
                 <ColumnChart data={DateData} />
               ) : activeIndex == 1 ? (
-                <AreaChart />
+                <AreaChart
+                  data={StockData.groupedData}
+                  xlabel={StockData.dates}
+                />
               ) : (
-                <PosNegChart />
+                <PosNegChart
+                  data={ChangeData.groupedData}
+                  xlabel={ChangeData.dates}
+                />
               )}
             </Section>
             <SectionWrapper>
