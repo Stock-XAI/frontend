@@ -30,6 +30,7 @@ const ColumnChart = ({ data }: Props) => {
       data: [21, 7, 25, 13, 22, 8],
     },
   ]);
+
   const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
