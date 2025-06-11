@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { styled } from "styled-components";
+import { keyframes, styled } from "styled-components";
 import { Pred, Stock, StockInfo } from "../../types/stock";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import logo from "../../assets/logo.png";
@@ -36,8 +36,8 @@ function Detail() {
   const navigate = useNavigate();
   const [isFocused, setIsFocused] = useState(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  // const [isPred, setIsPred] = useState(false);
-  // const [isExp, setIsExp] = useState(false);
+  const [isPred, setIsPred] = useState(false);
+  const [isExp, setIsExp] = useState(false);
 
   const { data: stockInfoData } = useStockBasic({
     ticker,
@@ -312,10 +312,33 @@ function Detail() {
       <Container>
         {stockBasic && (
           <>
-            <Title>📊 {stockBasic.ticker} Stock Prediction Report</Title>
+            <TitleWrapper>
+              <TitleText>{stockBasic.ticker} Report</TitleText>
+              <AnimatedLine />
+            </TitleWrapper>
+            <SectionTitle>1. Basic Information</SectionTitle>
+
+            <Section>
+              <ReactApexChart
+                options={state.options}
+                series={state.series}
+                type="candlestick"
+                height={350}
+              />
+            </Section>
+            <SectionTitle>2. Related News</SectionTitle>
+            <Section>
+              <Carousel data={stockBasic.news} />
+            </Section>
+
+            <SectionTitle>3. Predicted Result</SectionTitle>
             {stockPred && (
               <ResultWrapper>
-                Predicted for {horizon} days from now
+                <PredWrapper>
+                  <PredDate>{stockPred.prediction.predicted_date}</PredDate>
+                  <PredDetail>Predicted for {horizon} days from now</PredDetail>
+                </PredWrapper>
+
                 <ContentWrapper>
                   <img
                     src={stockPred.prediction.result > 0 ? RiseIcon : FallIcon}
@@ -327,21 +350,6 @@ function Detail() {
               </ResultWrapper>
             )}
             <Section>
-              <h2>Basic Information</h2>
-              <ReactApexChart
-                options={state.options}
-                series={state.series}
-                type="candlestick"
-                height={350}
-              />
-            </Section>
-
-            <Section>
-              <h2>Related News</h2>
-              <Carousel data={stockBasic.news} />
-            </Section>
-            <Section>
-              <h2>Detail Explanations</h2>
               <MenuWrapper>
                 <Highlight
                   style={{ transform: `translateX(${activeIndex * 100}%)` }}
@@ -377,22 +385,7 @@ function Detail() {
                 />
               )}
             </Section>
-            <SectionWrapper>
-              {/* <Section>
-                <h2>Inferences</h2>
-                <p>{stockPredictionResult.explanation.why}</p>
-                <ul>
-                  {stockPredictionResult.explanation.features.map(
-                    (feature, idx) => (
-                      <li key={feature}>
-                        {feature} → SHAP:{" "}
-                        {stockPredictionResult.explanation.shapValues[idx]}
-                      </li>
-                    )
-                  )}
-                </ul>
-              </Section> */}
-            </SectionWrapper>
+            <SectionWrapper></SectionWrapper>
           </>
         )}
       </Container>
@@ -408,6 +401,38 @@ function Detail() {
 
 export default Detail;
 
+const drawLine = keyframes`
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+`;
+
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 20px 10px;
+`;
+
+const TitleText = styled.div`
+  font-size: 72px;
+  font-weight: 400;
+  font-style: italic;
+  color: ${({ theme }) => theme.systemColor.white};
+  white-space: nowrap;
+`;
+
+const AnimatedLine = styled.div`
+  height: 2px;
+  background: linear-gradient(to right, #ffffff, #808080);
+  width: 0;
+  animation: ${drawLine} 1.2s ease-out forwards;
+`;
+
 const Navbar = styled.nav`
   position: fixed;
   top: 0;
@@ -422,6 +447,31 @@ const Navbar = styled.nav`
   padding: 0 24px;
   z-index: 1000;
   border-bottom: ${({ theme }) => `1px solid ${theme.grayColor.gray800}`};
+`;
+
+const PredWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  gap: 8px;
+`;
+
+const PredDate = styled.div`
+  font-size: 32px;
+  font-weight: bold;
+  color: ${({ theme }) => theme.grayColor.gray100};
+`;
+const PredDetail = styled.div`
+  font-size: 18px;
+  color: ${({ theme }) => theme.grayColor.gray300};
+`;
+
+const SectionTitle = styled.div`
+  color: ${({ theme }) => theme.systemColor.white};
+  background-color: ${({ theme }) => theme.systemColor.black};
+  padding: 32px;
+  font-size: 28px;
 `;
 
 const MenuWrapper = styled.div`
@@ -487,8 +537,6 @@ const ResultWrapper = styled.div`
   margin: 30px;
   padding-bottom: 20px;
   position: relative;
-  font-size: 20px;
-  color: ${({ theme }) => theme.grayColor.gray600};
 
   &::after {
     content: "";
@@ -516,13 +564,7 @@ const ContentWrapper = styled.div`
   align-items: center;
   gap: 10px;
   font-size: 48px;
-  color: ${({ theme }) => theme.systemColor.black};
-`;
-
-const Title = styled.div`
-  font-size: 24px;
-  font-weight: bold;
-  padding: 0 10px;
+  color: ${({ theme }) => theme.grayColor.gray100};
 `;
 
 const Input = styled.input`
@@ -552,13 +594,14 @@ const Main = styled.main`
   flex-direction: column;
   justify-content: start;
   align-items: start;
-  padding: 160px 32px;
+  padding: 160px 32px 80px 32px;
   gap: 14px;
   background-color: ${({ theme }) => theme.systemColor.black};
 `;
 
 const Container = styled.div`
-  margin-top: 28px;
+  padding: 24px;
+  background-color: ${({ theme }) => theme.systemColor.black};
 `;
 
 const SearchWrapper = styled.div`
@@ -574,7 +617,7 @@ const Section = styled.section`
   display: flex;
   flex-direction: column;
   padding: 32px;
-  /* border-bottom: 1px solid ${({ theme }) => theme.grayColor.gray300}; */
+  margin-bottom: 72px;
   background-color: ${({ theme }) => theme.systemColor.white};
   h1,
   h2 {
