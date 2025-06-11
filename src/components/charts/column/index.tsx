@@ -107,6 +107,13 @@ const ColumnChart = ({ data }: Props) => {
         },
       },
     },
+    states: {
+      hover: {
+        filter: {
+          type: "darken",
+        },
+      },
+    },
     xaxis: {
       // type: "datetime",
       type: "category",
