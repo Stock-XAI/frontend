@@ -123,6 +123,13 @@ const PosNegChart = ({ data, xlabel }: Props) => {
       categories: label,
       labels: { rotate: -90 },
     },
+    states: {
+      hover: {
+        filter: {
+          type: "darken",
+        },
+      },
+    },
     yaxis: {
       min: minValue,
       max: maxValue,

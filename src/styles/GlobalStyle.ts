@@ -10,6 +10,9 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     height: 100%;
+    font-family: "DM Serif Display", serif;
+    font-weight: 200;
+    font-style: italic;
   }
 
   #root {

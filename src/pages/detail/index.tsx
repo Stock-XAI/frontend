@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { styled } from "styled-components";
+import { keyframes, styled } from "styled-components";
 import { Pred, Stock, StockInfo } from "../../types/stock";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import logo from "../../assets/logo.png";
@@ -36,8 +36,8 @@ function Detail() {
   const navigate = useNavigate();
   const [isFocused, setIsFocused] = useState(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  // const [isPred, setIsPred] = useState(false);
-  // const [isExp, setIsExp] = useState(false);
+  const [isPred, setIsPred] = useState(false);
+  const [isExp, setIsExp] = useState(false);
 
   const { data: stockInfoData } = useStockBasic({
     ticker,
@@ -72,12 +72,16 @@ function Detail() {
   useEffect(() => {
     if (ticker) {
       setIsSearching(true);
+      setIsPred(false);
+      setIsExp(false);
     }
   }, [ticker]);
 
   useEffect(() => {
     if (horizon) {
       setIsSearching(true);
+      setIsPred(false);
+      setIsExp(false);
     }
   }, [horizon]);
 
@@ -97,6 +101,7 @@ function Detail() {
   }, [stockInfoData?.chartData]);
 
   const DateData = useMemo(() => {
+    setIsExp(true);
     const result: Record<string, number[]> = {};
     const tokens =
       expData?.explanation?.tokens?.length != 0
@@ -108,7 +113,6 @@ function Detail() {
         : dummyTokenScores;
 
     if (!tokens || !tokenScores) return {};
-    // setIsExp(true);
 
     for (let i = 0; i < tokens.length; i += 7) {
       const date = tokens[i].replace(",", "");
@@ -197,7 +201,7 @@ function Detail() {
   useEffect(() => {
     if (predData) {
       setStockPred(predData);
-      // setIsPred(true);
+      setIsPred(true);
     }
   }, [predData]);
 
@@ -208,7 +212,6 @@ function Detail() {
     });
   }, [stockChartData]);
 
-  //setState 저장 필요 + 차트 옵션 설정
   const [state, setState] = useState<{
     series: {
       data: { x: Date; y: number[] }[];
@@ -312,22 +315,13 @@ function Detail() {
       <Container>
         {stockBasic && (
           <>
-            <Title>📊 {stockBasic.ticker} Stock Prediction Report</Title>
-            {stockPred && (
-              <ResultWrapper>
-                Predicted for {horizon} days from now
-                <ContentWrapper>
-                  <img
-                    src={stockPred.prediction.result > 0 ? RiseIcon : FallIcon}
-                    width="64px"
-                    height="64px"
-                  />
-                  {stockPred.prediction.result}
-                </ContentWrapper>
-              </ResultWrapper>
-            )}
+            <TitleWrapper>
+              <TitleText>{stockBasic.ticker} Report</TitleText>
+              <AnimatedLine />
+            </TitleWrapper>
+            <SectionTitle>1. Basic Information</SectionTitle>
+
             <Section>
-              <h2>Basic Information</h2>
               <ReactApexChart
                 options={state.options}
                 series={state.series}
@@ -335,13 +329,48 @@ function Detail() {
                 height={350}
               />
             </Section>
-
+            <SectionTitle>2. Related News</SectionTitle>
             <Section>
-              <h2>Related News</h2>
               <Carousel data={stockBasic.news} />
             </Section>
-            <Section>
-              <h2>Detail Explanations</h2>
+
+            <SectionTitle>3. Predicted Result</SectionTitle>
+            {isPred ? (
+              stockPred ? (
+                <ResultWrapper>
+                  <PredWrapper>
+                    <PredDate>{stockPred.prediction.predicted_date}</PredDate>
+                    <PredDetail>
+                      Predicted for {horizon} days from now
+                    </PredDetail>
+                  </PredWrapper>
+
+                  <ContentWrapper>
+                    <img
+                      src={
+                        stockPred.prediction.result > 0 ? RiseIcon : FallIcon
+                      }
+                      width="64px"
+                      height="64px"
+                      alt="Prediction Icon"
+                    />
+                    {stockPred.prediction.result}
+                  </ContentWrapper>
+                </ResultWrapper>
+              ) : null
+            ) : (
+              <SpinnerWrapper>
+                <Spinner />
+                Predicting...
+              </SpinnerWrapper>
+            )}
+            <Section style={{ position: "relative" }}>
+              {!isExp && (
+                <OverlayExp>
+                  <Spinner />
+                  Analyzing...
+                </OverlayExp>
+              )}
               <MenuWrapper>
                 <Highlight
                   style={{ transform: `translateX(${activeIndex * 100}%)` }}
@@ -361,7 +390,6 @@ function Detail() {
                   height: "80px",
                 }}
               ></div>
-              {/* <div>hihihi</div> */}
 
               {activeIndex == 0 ? (
                 <ColumnChart data={DateData} />
@@ -377,22 +405,6 @@ function Detail() {
                 />
               )}
             </Section>
-            <SectionWrapper>
-              {/* <Section>
-                <h2>Inferences</h2>
-                <p>{stockPredictionResult.explanation.why}</p>
-                <ul>
-                  {stockPredictionResult.explanation.features.map(
-                    (feature, idx) => (
-                      <li key={feature}>
-                        {feature} → SHAP:{" "}
-                        {stockPredictionResult.explanation.shapValues[idx]}
-                      </li>
-                    )
-                  )}
-                </ul>
-              </Section> */}
-            </SectionWrapper>
           </>
         )}
       </Container>
@@ -408,6 +420,38 @@ function Detail() {
 
 export default Detail;
 
+const drawLine = keyframes`
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+`;
+
+const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 20px 10px;
+`;
+
+const TitleText = styled.div`
+  font-size: 72px;
+  font-weight: 400;
+  font-style: italic;
+  color: ${({ theme }) => theme.systemColor.white};
+  white-space: nowrap;
+`;
+
+const AnimatedLine = styled.div`
+  height: 2px;
+  background: linear-gradient(to right, #ffffff, #808080);
+  width: 0;
+  animation: ${drawLine} 1.2s ease-out forwards;
+`;
+
 const Navbar = styled.nav`
   position: fixed;
   top: 0;
@@ -422,6 +466,31 @@ const Navbar = styled.nav`
   padding: 0 24px;
   z-index: 1000;
   border-bottom: ${({ theme }) => `1px solid ${theme.grayColor.gray800}`};
+`;
+
+const PredWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  gap: 8px;
+`;
+
+const PredDate = styled.div`
+  font-size: 32px;
+  font-weight: bold;
+  color: ${({ theme }) => theme.grayColor.gray100};
+`;
+const PredDetail = styled.div`
+  font-size: 18px;
+  color: ${({ theme }) => theme.grayColor.gray300};
+`;
+
+const SectionTitle = styled.div`
+  color: ${({ theme }) => theme.systemColor.white};
+  background-color: ${({ theme }) => theme.systemColor.black};
+  padding: 32px;
+  font-size: 28px;
 `;
 
 const MenuWrapper = styled.div`
@@ -472,11 +541,23 @@ const Overlay = styled.div`
   gap: 10px;
 `;
 
-const SectionWrapper = styled.div`
+export const OverlayExp = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  pointer-events: none;
   display: flex;
-  flex-direction: row;
-  justify-content: start;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  padding: 20px;
+  gap: 10px;
+  font-size: 18px;
+  color: ${({ theme }) => theme.grayColor.gray100};
 `;
 
 const ResultWrapper = styled.div`
@@ -487,8 +568,6 @@ const ResultWrapper = styled.div`
   margin: 30px;
   padding-bottom: 20px;
   position: relative;
-  font-size: 20px;
-  color: ${({ theme }) => theme.grayColor.gray600};
 
   &::after {
     content: "";
@@ -516,13 +595,7 @@ const ContentWrapper = styled.div`
   align-items: center;
   gap: 10px;
   font-size: 48px;
-  color: ${({ theme }) => theme.systemColor.black};
-`;
-
-const Title = styled.div`
-  font-size: 24px;
-  font-weight: bold;
-  padding: 0 10px;
+  color: ${({ theme }) => theme.grayColor.gray100};
 `;
 
 const Input = styled.input`
@@ -552,13 +625,14 @@ const Main = styled.main`
   flex-direction: column;
   justify-content: start;
   align-items: start;
-  padding: 160px 32px;
+  padding: 160px 32px 80px 32px;
   gap: 14px;
   background-color: ${({ theme }) => theme.systemColor.black};
 `;
 
 const Container = styled.div`
-  margin-top: 28px;
+  padding: 24px;
+  background-color: ${({ theme }) => theme.systemColor.black};
 `;
 
 const SearchWrapper = styled.div`
@@ -574,7 +648,7 @@ const Section = styled.section`
   display: flex;
   flex-direction: column;
   padding: 32px;
-  /* border-bottom: 1px solid ${({ theme }) => theme.grayColor.gray300}; */
+  margin-bottom: 72px;
   background-color: ${({ theme }) => theme.systemColor.white};
   h1,
   h2 {
@@ -620,12 +694,23 @@ const StockInfoItem = styled.li`
   }
 `;
 
+const SpinnerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 10px;
+  font-size: 18px;
+  color: ${({ theme }) => theme.grayColor.gray100};
+`;
+
 const Spinner = styled.div`
-  border: 6px solid rgba(255, 255, 255, 0.2);
-  border-top: 6px solid #ffffff;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top: 4px solid #ffffff;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   animation: spin 1s linear infinite;
 
   @keyframes spin {
