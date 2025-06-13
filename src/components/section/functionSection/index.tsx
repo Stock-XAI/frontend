@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+import { useEffect, useRef, useState } from "react";
 
 const contents = [
   {
@@ -29,10 +30,47 @@ const contents = [
 ];
 
 const FunctionSection = () => {
+  const [visibleSections, setVisibleSections] = useState<boolean[]>(
+    Array(contents.length).fill(false)
+  );
+  const sectionRefs = useRef<HTMLDivElement[]>([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const index = sectionRefs.current.findIndex(
+            (el) => el === entry.target
+          );
+          if (index !== -1) {
+            setVisibleSections((prev) => {
+              const next = [...prev];
+              next[index] = entry.isIntersecting;
+              return next;
+            });
+          }
+        });
+      },
+      {
+        threshold: 0.3,
+      }
+    );
+
+    sectionRefs.current.forEach((el) => el && observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Wrapper>
       {contents.map((item, index) => (
-        <Section key={index}>
+        <Section
+          key={index}
+          ref={(el) => {
+            if (el) sectionRefs.current[index] = el;
+          }}
+          $isVisible={visibleSections[index]}
+        >
           <HalfBox>
             <img
               src={item.image}
@@ -70,7 +108,7 @@ const Wrapper = styled.div`
   gap: 100px;
 `;
 
-const Section = styled.div`
+const Section = styled.div<{ $isVisible: boolean }>`
   display: flex;
   flex-direction: row;
   padding: 10px;
@@ -78,17 +116,15 @@ const Section = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
+
+  opacity: ${({ $isVisible }) => ($isVisible ? 1 : 0)};
+  transform: ${({ $isVisible }) =>
+    $isVisible ? "translateY(0)" : "translateY(30px)"};
+  transition: all 0.6s ease-in-out;
 `;
 
 const HalfBox = styled.div`
   width: 50%;
-`;
-
-const Text = styled.p`
-  font-size: 18px;
-  color: ${({ theme }) => theme.grayColor.gray300};
-  line-height: 1.6;
-  padding: 16px;
 `;
 
 const QuoteBlock = styled.blockquote`
