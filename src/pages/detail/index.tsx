@@ -19,6 +19,7 @@ import ColumnChart from "../../components/charts/column";
 import AreaChart from "../../components/charts/area";
 import PosNegChart from "../../components/charts/posneg";
 import { dummyTokens, dummyTokenScores } from "../../constants/stock";
+import Footer from "../../components/footer";
 
 function Detail() {
   const [searchParams] = useSearchParams();
@@ -408,6 +409,7 @@ function Detail() {
           </>
         )}
       </Container>
+      <Footer />
       {isSearching && (
         <Overlay>
           <Spinner />
