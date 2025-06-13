@@ -7,11 +7,13 @@ import logo from "../../assets/logo.png";
 import Dropdown from "../../components/dropdown";
 import FunctionSection from "../../components/section/functionSection";
 import Footer from "../../components/footer";
+import Timeline from "../../components/timeline";
 
 const sections = ["Preview", "Function"]; //"Method", "Model", "Performance"
 
 const PreviewSection = () => (
   <Wrapper>
+    <Timeline />
     <Heading>Don’t blindly trust.</Heading>
     <HeadingSub>
       Evaluate the value of the information yourself before using it.
@@ -81,7 +83,7 @@ function Home() {
     <>
       <Navbar>
         <img src={logo} alt="logo" style={{ width: "40px", height: "auto" }} />
-        {sections.map((item, id) => (
+        {sections.map((item) => (
           <NavItem
             key={item}
             onClick={() => scrollToSection(item)}
@@ -233,7 +235,7 @@ const Container = styled.div`
 `;
 
 const Section = styled.section`
-  padding: 80px 32px 32px;
+  padding: 60px 32px 32px;
   background-color: ${({ theme }) => theme.systemColor.black};
 
   h2 {
