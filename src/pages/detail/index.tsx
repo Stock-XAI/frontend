@@ -409,12 +409,14 @@ function Detail() {
           </>
         )}
       </Container>
-      <Footer />
-      {isSearching && (
+
+      {isSearching ? (
         <Overlay>
           <Spinner />
           Analyzing...
         </Overlay>
+      ) : (
+        <Footer />
       )}
     </div>
   );
