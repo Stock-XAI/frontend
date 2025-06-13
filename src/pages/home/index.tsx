@@ -1,36 +1,21 @@
-import { useEffect, useRef, useState } from "react"; //useRef,
+import { useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
 import { useStockSearch } from "../../hooks/useStockQuery";
 import { Stock } from "../../types/stock";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import Dropdown from "../../components/dropdown";
+import FunctionSection from "../../components/section/functionSection";
+import Footer from "../../components/footer";
 
-const sections = ["Preview"]; //"Method", "Model", "Performance"
+const sections = ["Preview", "Function"]; //"Method", "Model", "Performance"
 
 const PreviewSection = () => (
   <Wrapper>
-    <img src="/report.png" alt="Stock Prediction Chart" width="1000px" />
-    <Heading>
-      For smarter investing, <Highlight>make the most</Highlight> of our
-      service.
-    </Heading>
-    <SubText>
-      Get <Strong>predicted stock prices</Strong> for all US and Korean stocks.{" "}
-      <br />
-      See forecasts for <Strong>1-day, 7-day, and 30-day</Strong> trends.
-    </SubText>
-    <SubText>
-      We provide more than just predictions — access the{" "}
-      <Strong>latest news</Strong> <br />
-      and detailed <Strong>explanation reports</Strong> behind every forecast.
-    </SubText>
-    <Summary>
-      Based on our model’s results and reasoning, <br />
-      <Emphasis>
-        we’ll support you in making smarter investment decisions.
-      </Emphasis>
-    </Summary>
+    <Heading>Don’t blindly trust.</Heading>
+    <HeadingSub>
+      Evaluate the value of the information yourself before using it.
+    </HeadingSub>
   </Wrapper>
 );
 const MethodSection = () => <p>Here are some amazing features.</p>;
@@ -42,6 +27,7 @@ const sectionComponentMap: { [key: string]: React.ComponentType } = {
   Method: MethodSection,
   Model: ModelSection,
   Performance: PerformanceSection,
+  Function: FunctionSection,
 };
 
 function Home() {
@@ -58,11 +44,12 @@ function Home() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const id = entry.target.getAttribute("data-id");
+            console.log(id);
             if (id) setActive(id);
           }
         });
       },
-      { threshold: 0.6 }
+      { threshold: 0.3 }
     );
 
     sectionRefs.current.forEach((el) => el && observer.observe(el));
@@ -94,7 +81,7 @@ function Home() {
     <>
       <Navbar>
         <img src={logo} alt="logo" style={{ width: "40px", height: "auto" }} />
-        {sections.map((item) => (
+        {sections.map((item, id) => (
           <NavItem
             key={item}
             onClick={() => scrollToSection(item)}
@@ -156,12 +143,12 @@ function Home() {
               }}
               data-id={item}
             >
-              {/* <h2>{item}</h2> */}
               <SectionComponent />
             </Section>
           );
         })}
       </Container>
+      <Footer />
     </>
   );
 }
@@ -220,9 +207,9 @@ const Main = styled.main`
   justify-content: start;
   align-items: start;
   padding: 160px 32px;
+  padding-bottom: 0;
   gap: 14px;
   background-color: ${({ theme }) => theme.systemColor.black};
-  /* height: 100%; */
 `;
 
 const Title = styled.div`
@@ -242,18 +229,16 @@ const NavItem = styled.div<{ $active: boolean }>`
 `;
 
 const Container = styled.div`
-  margin-top: 56px;
+  background-color: ${({ theme }) => theme.systemColor.black};
 `;
 
 const Section = styled.section`
-  /* height: 100vh; */
   padding: 80px 32px 32px;
-  background-color: ${({ theme }) => theme.systemColor.white};
-  /* border-bottom: 1px solid #ccc; */
+  background-color: ${({ theme }) => theme.systemColor.black};
 
   h2 {
     font-size: 2rem;
-    margin-bottom: 16px;
+    padding-bottom: 16px;
   }
 `;
 
@@ -325,45 +310,22 @@ const StockInfoItem = styled.li`
 const Wrapper = styled.section`
   padding: 80px 24px;
   width: 100%;
-  background: linear-gradient(135deg, #f5f7fa, #eef1f5);
   text-align: center;
   border-radius: 24px;
-  /* max-width: 800px; */
   margin: 0 auto;
 `;
 
 const Heading = styled.h1`
+  font-size: 70px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: ${({ theme }) => theme.grayColor.gray100};
+  line-height: 1.4;
+`;
+const HeadingSub = styled.h1`
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 24px;
-  color: #1f2d3d;
+  color: ${({ theme }) => theme.grayColor.gray300};
   line-height: 1.4;
-`;
-
-const Highlight = styled.span`
-  color: #0070f3;
-`;
-
-const SubText = styled.p`
-  font-size: 1.2rem;
-  color: #4a4a4a;
-  line-height: 1.8;
-  margin-bottom: 24px;
-`;
-
-const Strong = styled.span`
-  font-weight: bold;
-  color: #222;
-`;
-
-const Summary = styled.div`
-  margin-top: 32px;
-  font-size: 1.15rem;
-  line-height: 1.8;
-  color: #2a2a2a;
-`;
-
-const Emphasis = styled.span`
-  font-weight: 600;
-  color: #0070f3;
 `;
