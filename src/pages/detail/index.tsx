@@ -360,7 +360,8 @@ function Detail() {
                     />
                     {stockPred.prediction.result == 0
                       ? 1.6398 + "%"
-                      : stockPred.prediction.result * 100 + "%"}
+                      : (Number(stockPred.prediction.result) * 100).toFixed(3) +
+                        "%"}
                   </ContentWrapper>
                 </ResultWrapper>
               ) : null
