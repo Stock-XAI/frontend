@@ -102,7 +102,6 @@ function Detail() {
   }, [stockInfoData?.chartData]);
 
   const DateData = useMemo(() => {
-    setIsExp(true);
     const result: Record<string, number[]> = {};
     const tokens =
       expData?.explanation?.tokens?.length != 0
@@ -125,6 +124,10 @@ function Detail() {
     }
 
     return result;
+  }, [expData]);
+
+  useEffect(() => {
+    setIsExp(true);
   }, [expData]);
 
   const StockData = useMemo(() => {
