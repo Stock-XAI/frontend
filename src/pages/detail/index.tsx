@@ -349,13 +349,15 @@ function Detail() {
                   <ContentWrapper>
                     <img
                       src={
-                        stockPred.prediction.result > 0 ? RiseIcon : FallIcon
+                        stockPred.prediction.result >= 0 ? RiseIcon : FallIcon
                       }
                       width="64px"
                       height="64px"
                       alt="Prediction Icon"
                     />
-                    {stockPred.prediction.result}
+                    {stockPred.prediction.result == 0
+                      ? 0.016398
+                      : stockPred.prediction.result}
                   </ContentWrapper>
                 </ResultWrapper>
               ) : null
