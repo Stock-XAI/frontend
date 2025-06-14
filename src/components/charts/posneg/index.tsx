@@ -135,7 +135,10 @@ const PosNegChart = ({ data, xlabel }: Props) => {
       max: maxValue,
       title: { text: "Value" },
       labels: {
-        formatter: (val) => `${val}`,
+        formatter: (val) => {
+          const num = Number(val);
+          return Math.abs(num) < 1e-8 ? "0" : num.toFixed(4);
+        },
       },
       axisTicks: {
         show: true,
