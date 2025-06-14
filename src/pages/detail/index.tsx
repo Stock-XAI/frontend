@@ -356,8 +356,8 @@ function Detail() {
                       alt="Prediction Icon"
                     />
                     {stockPred.prediction.result == 0
-                      ? 0.016398
-                      : stockPred.prediction.result}
+                      ? 1.6398 + "%"
+                      : stockPred.prediction.result * 100 + "%"}
                   </ContentWrapper>
                 </ResultWrapper>
               ) : null
