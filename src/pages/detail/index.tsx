@@ -293,7 +293,7 @@ function Detail() {
                 }, 200);
               }}
             />
-            {isFocused && keyword.length > 0 && searchResult.length > 0 && (
+            {keyword.length > 0 && searchResult.length > 0 && (
               <SearchResultContainer>
                 <ul>
                   {searchResult.map((item) => (
