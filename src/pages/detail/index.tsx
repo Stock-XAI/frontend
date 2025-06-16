@@ -262,6 +262,7 @@ function Detail() {
   }, [stockInfoData]);
 
   const handleStockPrediction = (item: Stock) => {
+    console.log("stock prediction!!!", item);
     setTicker(item.ticker);
     setKeyword(item.ticker);
   };
