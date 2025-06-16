@@ -262,9 +262,10 @@ function Detail() {
   }, [stockInfoData]);
 
   const handleStockPrediction = (item: Stock) => {
-    console.log("stock prediction!!!", item);
+    // console.log("stock prediction!!!", item);
     setTicker(item.ticker);
     setKeyword(item.ticker);
+    setIsFocused(false);
   };
 
   return (
@@ -287,11 +288,11 @@ function Detail() {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               onFocus={() => setIsFocused(true)}
-              onBlur={() => {
-                setTimeout(() => {
-                  setIsFocused(false);
-                }, 200);
-              }}
+              // onBlur={() => {
+              //   setTimeout(() => {
+              //     setIsFocused(false);
+              //   }, 200);
+              // }}
             />
             {isFocused && keyword.length > 0 && searchResult.length > 0 && (
               <SearchResultContainer>
